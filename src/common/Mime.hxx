@@ -54,9 +54,9 @@ namespace HASH_MAP_NAMESPACE
 {
 
 template<>
-struct hash<resip::Mime>
+struct hash<msrp::Mime>
 {
-      size_t operator()(const resip::Mime& data) const;
+      size_t operator()(const msrp::Mime& data) const;
 };
 
 }

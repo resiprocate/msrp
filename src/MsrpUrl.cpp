@@ -275,14 +275,14 @@ MsrpUrl::encodeParsed(std::ostream& str) const
 }
 
 #if defined(HASH_MAP_NAMESPACE)
-size_t HASH_MAP_NAMESPACE::hash<resip::MsrpUrl>::operator()(const resip::MsrpUrl& v) const
+size_t HASH_MAP_NAMESPACE::hash<msrp::MsrpUrl>::operator()(const msrp::MsrpUrl& v) const
 {
-   return resip::Data::from(v).hash();
+   return msrp::Data::from(v).hash();
 }
 #elif defined(__INTEL_COMPILER)
-size_t std::hash_value(const resip::MsrpUrl& v)
+size_t std::hash_value(const msrp::MsrpUrl& v)
 {
-   return resip::Data::from(v).hash();
+   return msrp::Data::from(v).hash();
 }
 #endif
 

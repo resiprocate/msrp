@@ -67,9 +67,9 @@ namespace HASH_MAP_NAMESPACE
 {
 
 template <>
-struct hash<resip::MsrpUrl>
+struct hash<msrp::MsrpUrl>
 {
-      size_t operator()(const resip::MsrpUrl& v) const;
+      size_t operator()(const msrp::MsrpUrl& v) const;
 };
 
 }
