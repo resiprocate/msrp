@@ -1,40 +1,50 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/GenericContents.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+
+GenericContents::GenericContents()
+   : PlainContents()
+{}
+
+GenericContents::GenericContents(const Data& text)
+   : PlainContents(text)
+{}
+
+GenericContents::GenericContents(HeaderFieldValue* hfv, const Mime& contentType)
+   : PlainContents(hfv, contentType)
+{}
+
+GenericContents::GenericContents(const Data& data, const Mime& contentType)
+   : PlainContents(data, contentType)
+{}
+
+GenericContents::GenericContents(const GenericContents& rhs)
+   : PlainContents(rhs)
+{}
+
+GenericContents::~GenericContents()
+{}
+
+GenericContents& 
+GenericContents::operator=(const GenericContents& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      this->PlainContents::operator=(rhs);
+   }
+   return *this;
 }
 
-#endif
+Contents* 
+GenericContents::clone() const
+{
+   return new GenericContents(*this);
+}
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

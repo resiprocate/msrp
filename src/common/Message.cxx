@@ -1,40 +1,38 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/Message.hxx"
+//#include "common/os/DataStream.hxx"
+#include <cassert>
 
-namespace msrp
+using namespace msrp;
+
+std::ostream& 
+msrp::operator<<(std::ostream& strm, const msrp::Message& msg)
 {
 
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+   // .dlb. what a bad idea..
+   // escaping should be handled at Data 
+   // msg scanner should indicate that it saw escaped characters
+   // Data's coming from a marked buffer should assume they need to be escaped.
+   // Data's coming from user should assume they need to be escaped.
+   // Otherwise, Data's should NOT escape.
+/*
+   Data encoded;
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
+   DataStream encodeStream(encoded);
+   msg.encode(encodeStream);
+   encodeStream.flush();
 
+   strm << encoded.escaped();
+*/
+
+   msg.encode(strm);
+   
+   return strm;
 }
 
-#endif
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -1,44 +1,35 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#ifndef MSRP_TransactionMessage_hxx
+#define MSRP_TransactionMessage_hxx
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include <cassert>
+#include "common/Message.hxx"
+#include "common/os/HeapInstanceCounter.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+class TransactionMessage : public Message
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+      RESIP_HeapCount(TransactionMessage);
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
+      virtual const Data& getTransactionId() const=0; 
+
+      // indicates this message is associated with a Client Transaction for the
+      // purpose of determining which TransactionMap to use
+      virtual bool isClientTransaction() const = 0; 
+
+      virtual Message* clone() const {assert(false); return NULL;}
 };
 
 }
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 
- * Copyright (c) 2000 Vovida Networks, Inc.  All rights reserved.
+ * Copyright (c) 2004 Vovida Networks, Inc.  All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,3 +75,4 @@ class MD5Stream : private MD5Buffer, public std::ostream
  * <http://www.vovida.org/>.
  *
  */
+

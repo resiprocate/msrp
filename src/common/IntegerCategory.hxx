@@ -1,40 +1,42 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_INTEGER_CATEGORY_HXX)
+#define MSRP_INTEGER_CATEGORY_HXX
 
-#include <iostream>
+#include <iosfwd>
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/ParserCategory.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+//====================
+// Integer:
+//====================
+class IntegerCategory : public ParserCategory
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+      enum {commaHandling = NoCommaTokenizing};
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
+      IntegerCategory();
+      IntegerCategory(HeaderFieldValue* hfv, Headers::Type type);
+      IntegerCategory(const IntegerCategory&);
+      IntegerCategory& operator=(const IntegerCategory&);
 
+      virtual void parse(ParseBuffer& pb);
+      virtual std::ostream& encodeParsed(std::ostream& str) const;
+      virtual ParserCategory* clone() const;
+
+      int& value() const;
+      Data& comment() const;
+
+   private:
+      mutable int mValue;
+      mutable Data mComment;
+};
+ 
 }
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -1,40 +1,47 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_PLAINCONTENTS_HXX)
+#define MSRP_PLAINCONTENTS_HXX 
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/Contents.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+class PlainContents : public Contents
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
+      static const PlainContents Empty;
+
+      PlainContents();
+      PlainContents(const Data& text);
+      PlainContents(HeaderFieldValue* hfv, const Mime& contentType);
+      PlainContents(const Data& data, const Mime& contentType);
+      PlainContents(const PlainContents& rhs);
+      virtual ~PlainContents();
+      PlainContents& operator=(const PlainContents& rhs);
+
+      virtual Contents* clone() const;
+
+      virtual Data getBodyData() const;
+
+      static const Mime& getStaticType() ;
+
+      virtual std::ostream& encodeParsed(std::ostream& str) const;
+      virtual void parse(ParseBuffer& pb);
+
+      const Data& text() const {checkParsed(); return mText;}
+      Data& text() {checkParsed(); return mText;}
+
+      static bool init();
    private:
-      char mBuf[64];
-      MD5Context mContext;
+      Data mText;
 };
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
+static bool invokePlainContentsInit = PlainContents::init();
 
 }
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

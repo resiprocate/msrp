@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)src/&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)src/&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -103,139 +103,199 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\os\BaseException.cxx">
+				RelativePath=".\common\os\BaseException.cxx">
 			</File>
 			<File
-				RelativePath=".\BranchParameter.cxx">
+				RelativePath=".\common\BranchParameter.cxx">
 			</File>
 			<File
-				RelativePath=".\ByteRange.cxx">
+				RelativePath=".\ByteRange.cpp">
 			</File>
 			<File
-				RelativePath=".\os\Coders.cxx">
+				RelativePath=".\common\os\Coders.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Condition.cxx">
+				RelativePath=".\common\os\Condition.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Data.cxx">
+				RelativePath=".\common\Contents.cxx">
 			</File>
 			<File
-				RelativePath=".\DataParameter.cxx">
+				RelativePath=".\common\os\CountStream.cxx">
 			</File>
 			<File
-				RelativePath=".\os\DataStream.cxx">
+				RelativePath=".\common\os\Data.cxx">
 			</File>
 			<File
-				RelativePath=".\Embedded.cxx">
+				RelativePath=".\common\DataParameter.cxx">
 			</File>
 			<File
-				RelativePath=".\ExistsParameter.cxx">
+				RelativePath=".\common\os\DataStream.cxx">
 			</File>
 			<File
-				RelativePath=".\FloatParameter.cxx">
+				RelativePath=".\common\os\DnsUtil.cxx">
 			</File>
 			<File
-				RelativePath=".\HeaderFieldValue.cxx">
+				RelativePath=".\common\Embedded.cxx">
 			</File>
 			<File
-				RelativePath=".\HeaderFieldValueList.cxx">
+				RelativePath=".\common\ExistsParameter.cxx">
 			</File>
 			<File
-				RelativePath=".\HeaderTypes.cxx">
+				RelativePath=".\common\FloatParameter.cxx">
 			</File>
 			<File
-				RelativePath=".\os\HeapInstanceCounter.cxx">
+				RelativePath=".\common\GenericContents.cxx">
 			</File>
 			<File
-				RelativePath=".\IntegerParameter.cxx">
+				RelativePath=".\common\HeaderFieldValue.cxx">
 			</File>
 			<File
-				RelativePath=".\LazyParser.cxx">
+				RelativePath=".\common\HeaderFieldValueList.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Lock.cxx">
+				RelativePath=".\common\HeaderHash.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Log.cxx">
+				RelativePath=".\common\Headers.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Logger.cxx">
+				RelativePath=".\common\HeaderTypes.cxx">
 			</File>
 			<File
-				RelativePath=".\MsrpRequestLine.cxx">
+				RelativePath=".\common\os\HeapInstanceCounter.cxx">
 			</File>
 			<File
-				RelativePath=".\MsrpStatusLine.cxx">
+				RelativePath=".\common\IntegerCategory.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Mutex.cxx">
+				RelativePath=".\common\IntegerParameter.cxx">
 			</File>
 			<File
-				RelativePath=".\Parameter.cxx">
+				RelativePath=".\common\LazyParser.cxx">
 			</File>
 			<File
-				RelativePath=".\ParameterHash.cxx">
+				RelativePath=".\common\os\Lock.cxx">
 			</File>
 			<File
-				RelativePath=".\ParameterTypes.cxx">
+				RelativePath=".\common\os\Log.cxx">
 			</File>
 			<File
-				RelativePath=".\os\ParseBuffer.cxx">
+				RelativePath=".\common\os\Logger.cxx">
 			</File>
 			<File
-				RelativePath=".\ParserCategory.cxx">
+				RelativePath=".\common\os\MD5Stream.cxx">
 			</File>
 			<File
-				RelativePath=".\QopParameter.cxx">
+				RelativePath=".\common\Message.cxx">
 			</File>
 			<File
-				RelativePath=".\QuotedDataParameter.cxx">
+				RelativePath=".\common\Mime.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Random.cxx">
+				RelativePath=".\common\MsgHeaderScanner.cxx">
 			</File>
 			<File
-				RelativePath=".\ReportFailure.cxx">
+				RelativePath=".\MsrpMessage.cpp">
 			</File>
 			<File
-				RelativePath=".\ReportSuccess.cxx">
+				RelativePath=".\MsrpRequestLine.cpp">
 			</File>
 			<File
-				RelativePath=".\RportParameter.cxx">
+				RelativePath=".\MsrpStatusLine.cpp">
 			</File>
 			<File
-				RelativePath=".\os\Socket.cxx">
+				RelativePath=".\MsrpUrl.cpp">
 			</File>
 			<File
-				RelativePath=".\os\Subsystem.cxx">
+				RelativePath=".\common\os\Mutex.cxx">
 			</File>
 			<File
-				RelativePath=".\Symbols.cxx">
+				RelativePath=".\common\OctetContents.cxx">
 			</File>
 			<File
-				RelativePath=".\os\SysLogBuf.cxx">
+				RelativePath=".\common\Parameter.cxx">
 			</File>
 			<File
-				RelativePath=".\os\SysLogStream.cxx">
+				RelativePath=".\common\ParameterHash.cxx">
 			</File>
 			<File
-				RelativePath=".\os\ThreadIf.cxx">
+				RelativePath=".\common\ParameterTypes.cxx">
 			</File>
 			<File
-				RelativePath=".\os\Timer.cxx">
+				RelativePath=".\common\os\ParseBuffer.cxx">
 			</File>
 			<File
-				RelativePath=".\UnknownHeaderType.cxx">
+				RelativePath=".\common\ParserCategories.cxx">
 			</File>
 			<File
-				RelativePath=".\UnknownParameter.cxx">
+				RelativePath=".\common\ParserCategory.cxx">
 			</File>
 			<File
-				RelativePath=".\UnknownParameterType.cxx">
+				RelativePath=".\Path.cpp">
 			</File>
 			<File
-				RelativePath=".\os\vmd5.cxx">
+				RelativePath=".\common\PlainContents.cxx">
+			</File>
+			<File
+				RelativePath=".\common\QopParameter.cxx">
+			</File>
+			<File
+				RelativePath=".\common\QuotedDataParameter.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Random.cxx">
+			</File>
+			<File
+				RelativePath=".\ReportFailure.cpp">
+			</File>
+			<File
+				RelativePath=".\ReportSuccess.cpp">
+			</File>
+			<File
+				RelativePath=".\common\RportParameter.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Socket.cxx">
+			</File>
+			<File
+				RelativePath=".\Status.cpp">
+			</File>
+			<File
+				RelativePath=".\common\StringCategory.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Subsystem.cxx">
+			</File>
+			<File
+				RelativePath=".\common\Symbols.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\SysLogBuf.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\SysLogStream.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\ThreadIf.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Timer.cxx">
+			</File>
+			<File
+				RelativePath=".\common\Token.cxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownHeaderType.cxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownParameter.cxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownParameterType.cxx">
+			</File>
+			<File
+				RelativePath=".\common\os\vmd5.cxx">
 			</File>
 		</Filter>
 		<Filter
@@ -243,160 +303,226 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\os\BaseException.hxx">
+				RelativePath=".\common\os\BaseException.hxx">
 			</File>
 			<File
-				RelativePath=".\BranchParameter.hxx">
+				RelativePath=".\common\BranchParameter.hxx">
 			</File>
 			<File
-				RelativePath=".\ByteRange.hxx">
+				RelativePath=".\ByteRange.h">
 			</File>
 			<File
-				RelativePath=".\os\Coders.hxx">
+				RelativePath=".\common\os\Coders.hxx">
 			</File>
 			<File
-				RelativePath=".\os\compat.hxx">
+				RelativePath=".\common\os\compat.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Condition.hxx">
+				RelativePath=".\common\os\Condition.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Data.hxx">
+				RelativePath=".\common\Contents.hxx">
 			</File>
 			<File
-				RelativePath=".\DataParameter.hxx">
+				RelativePath=".\common\os\CountStream.hxx">
 			</File>
 			<File
-				RelativePath=".\os\DataStream.hxx">
+				RelativePath=".\common\os\Data.hxx">
 			</File>
 			<File
-				RelativePath=".\Embedded.hxx">
+				RelativePath=".\common\DataParameter.hxx">
 			</File>
 			<File
-				RelativePath=".\ExistsParameter.hxx">
+				RelativePath=".\common\os\DataStream.hxx">
 			</File>
 			<File
-				RelativePath=".\FloatParameter.hxx">
+				RelativePath=".\common\os\DnsUtil.hxx">
 			</File>
 			<File
-				RelativePath=".\os\HashMap.hxx">
+				RelativePath=".\common\Embedded.hxx">
 			</File>
 			<File
-				RelativePath=".\HeaderFieldValue.hxx">
+				RelativePath=".\common\ExistsParameter.hxx">
 			</File>
 			<File
-				RelativePath=".\HeaderFieldValueList.hxx">
+				RelativePath=".\common\FloatParameter.hxx">
 			</File>
 			<File
-				RelativePath=".\HeaderTypes.hxx">
+				RelativePath=".\common\GenericContents.hxx">
 			</File>
 			<File
-				RelativePath=".\os\HeapInstanceCounter.hxx">
+				RelativePath=".\common\os\HashMap.hxx">
 			</File>
 			<File
-				RelativePath=".\IntegerParameter.hxx">
+				RelativePath=".\common\HeaderFieldValue.hxx">
 			</File>
 			<File
-				RelativePath=".\LazyParser.hxx">
+				RelativePath=".\common\HeaderFieldValueList.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Lock.hxx">
+				RelativePath=".\common\HeaderHash.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Lockable.hxx">
+				RelativePath=".\common\Headers.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Log.hxx">
+				RelativePath=".\common\HeaderTypes.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Logger.hxx">
+				RelativePath=".\common\os\HeapInstanceCounter.hxx">
 			</File>
 			<File
-				RelativePath=".\MsrpRequestLine.hxx">
+				RelativePath=".\common\IntegerCategory.hxx">
 			</File>
 			<File
-				RelativePath=".\MsrpStatusLine.hxx">
+				RelativePath=".\common\IntegerParameter.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Mutex.hxx">
+				RelativePath=".\common\LazyParser.hxx">
 			</File>
 			<File
-				RelativePath=".\Parameter.hxx">
+				RelativePath=".\common\os\Lock.hxx">
 			</File>
 			<File
-				RelativePath=".\ParameterHash.hxx">
+				RelativePath=".\common\os\Lockable.hxx">
 			</File>
 			<File
-				RelativePath=".\ParameterTypeEnums.hxx">
+				RelativePath=".\common\os\Log.hxx">
 			</File>
 			<File
-				RelativePath=".\ParameterTypes.hxx">
+				RelativePath=".\common\os\Logger.hxx">
 			</File>
 			<File
-				RelativePath=".\os\ParseBuffer.hxx">
+				RelativePath=".\common\os\MD5Stream.hxx">
 			</File>
 			<File
-				RelativePath=".\ParseException.hxx">
+				RelativePath=".\common\Message.hxx">
 			</File>
 			<File
-				RelativePath=".\ParserCategory.hxx">
+				RelativePath=".\common\Mime.hxx">
 			</File>
 			<File
-				RelativePath=".\ParserContainerBase.hxx">
+				RelativePath=".\common\MsgHeaderScanner.hxx">
 			</File>
 			<File
-				RelativePath=".\QopParameter.hxx">
+				RelativePath=".\MsrpMessage.h">
 			</File>
 			<File
-				RelativePath=".\QuotedDataParameter.hxx">
+				RelativePath=".\MsrpRequestLine.h">
 			</File>
 			<File
-				RelativePath=".\os\Random.hxx">
+				RelativePath=".\MsrpStatusLine.h">
 			</File>
 			<File
-				RelativePath=".\ReportFailure.hxx">
+				RelativePath=".\MsrpUrl.h">
 			</File>
 			<File
-				RelativePath=".\ReportSuccess.hxx">
+				RelativePath=".\common\os\Mutex.hxx">
 			</File>
 			<File
-				RelativePath=".\RportParameter.hxx">
+				RelativePath=".\common\OctetContents.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Socket.hxx">
+				RelativePath=".\common\Parameter.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Subsystem.hxx">
+				RelativePath=".\common\ParameterHash.hxx">
 			</File>
 			<File
-				RelativePath=".\Symbols.hxx">
+				RelativePath=".\common\ParameterTypeEnums.hxx">
 			</File>
 			<File
-				RelativePath=".\os\SysLogBuf.hxx">
+				RelativePath=".\common\ParameterTypes.hxx">
 			</File>
 			<File
-				RelativePath=".\os\SysLogStream.hxx">
+				RelativePath=".\common\os\ParseBuffer.hxx">
 			</File>
 			<File
-				RelativePath=".\os\ThreadIf.hxx">
+				RelativePath=".\common\ParseException.hxx">
 			</File>
 			<File
-				RelativePath=".\os\Timer.hxx">
+				RelativePath=".\common\ParserCategories.hxx">
 			</File>
 			<File
-				RelativePath=".\UnknownHeaderType.hxx">
+				RelativePath=".\common\ParserCategory.hxx">
 			</File>
 			<File
-				RelativePath=".\UnknownParameter.hxx">
+				RelativePath=".\common\ParserContainer.hxx">
 			</File>
 			<File
-				RelativePath=".\UnknownParameterType.hxx">
+				RelativePath=".\common\ParserContainerBase.hxx">
 			</File>
 			<File
-				RelativePath=".\os\vmd5.hxx">
+				RelativePath=".\Path.h">
 			</File>
 			<File
-				RelativePath=".\os\WinLeakCheck.hxx">
+				RelativePath=".\common\PlainContents.hxx">
+			</File>
+			<File
+				RelativePath=".\common\QopParameter.hxx">
+			</File>
+			<File
+				RelativePath=".\common\QuotedDataParameter.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Random.hxx">
+			</File>
+			<File
+				RelativePath=".\ReportFailure.h">
+			</File>
+			<File
+				RelativePath=".\ReportSuccess.h">
+			</File>
+			<File
+				RelativePath=".\common\RportParameter.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Socket.hxx">
+			</File>
+			<File
+				RelativePath=".\Status.h">
+			</File>
+			<File
+				RelativePath=".\common\StringCategory.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Subsystem.hxx">
+			</File>
+			<File
+				RelativePath=".\common\Symbols.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\SysLogBuf.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\SysLogStream.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\ThreadIf.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\Timer.hxx">
+			</File>
+			<File
+				RelativePath=".\common\Token.hxx">
+			</File>
+			<File
+				RelativePath=".\common\TransactionMessage.hxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownHeaderType.hxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownParameter.hxx">
+			</File>
+			<File
+				RelativePath=".\common\UnknownParameterType.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\vmd5.hxx">
+			</File>
+			<File
+				RelativePath=".\common\os\WinLeakCheck.hxx">
 			</File>
 		</Filter>
 	</Files>

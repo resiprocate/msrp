@@ -1,40 +1,113 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/PlainContents.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+const PlainContents PlainContents::Empty;
+static bool invokePlainContentsInit = PlainContents::init();
+
+
+bool
+PlainContents::init()
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   static ContentsFactory<PlainContents> factory;
+   (void)factory;
+   return true;
 }
 
-#endif
+
+PlainContents::PlainContents()
+   : Contents(getStaticType()),
+     mText()
+{}
+
+PlainContents::PlainContents(const Data& txt)
+   : Contents(getStaticType()),
+     mText(txt)
+{}
+
+PlainContents::PlainContents(HeaderFieldValue* hfv, const Mime& contentsType)
+   : Contents(hfv, contentsType),
+     mText()
+{
+}
+ 
+PlainContents::PlainContents(const Data& txt, const Mime& contentsType)
+   : Contents(contentsType),
+     mText(txt)
+{
+}
+
+PlainContents::PlainContents(const PlainContents& rhs)
+   : Contents(rhs),
+     mText(rhs.mText)
+{
+}
+
+PlainContents::~PlainContents()
+{
+}
+
+PlainContents&
+PlainContents::operator=(const PlainContents& rhs)
+{
+   if (this != &rhs)
+   {
+      Contents::operator=(rhs);
+      mText = rhs.mText;
+   }
+   return *this;
+}
+
+Contents* 
+PlainContents::clone() const
+{
+   return new PlainContents(*this);
+}
+
+const Mime& 
+PlainContents::getStaticType() 
+{
+   static Mime type("text","plain");
+   return type;
+}
+
+std::ostream& 
+PlainContents::encodeParsed(std::ostream& str) const
+{
+   //DebugLog(<< "PlainContents::encodeParsed " << mText);
+   str << mText;
+   return str;
+}
+
+void 
+PlainContents::parse(ParseBuffer& pb)
+{
+   //DebugLog(<< "PlainContents::parse: " << pb.position());
+
+   const char* anchor = pb.position();
+   pb.skipToEnd();
+   pb.data(mText, anchor);
+
+   //DebugLog("PlainContents::parsed <" << mText << ">" );
+}
+
+
+Data
+PlainContents::getBodyData() const
+{
+   checkParsed(); 
+   return mText;
+}
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

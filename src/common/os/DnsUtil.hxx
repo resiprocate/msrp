@@ -1,38 +1,68 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_DNSUTIL_HXX)
+#define MSRP_DNSUTIL_HXX
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include <list>
+#include "BaseException.hxx"
+#include "Data.hxx"
+
+
+struct in_addr;
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+//class Tuple;
 
-class MD5Stream : private MD5Buffer, public std::ostream
+class DnsUtil
 {
    public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
+      class Exception : public BaseException
+      {
+         public:
+            Exception(const Data& msg,
+                      const Data& file,
+                      const int line)
+               : BaseException(msg, file, line) {}            
+         protected:
+            virtual const char* name() const { return "DnsUtil::Exception"; }
+      };
+
+      static Data getLocalHostName();
+      static Data getLocalDomainName();
+      static Data getLocalIpAddress(const Data& defaultInterface="eth0");
+
+      // wrappers for the not so ubiquitous inet_pton, inet_ntop (e.g. WIN32)
+      static Data inet_ntop(const struct in_addr& addr);
+      static Data inet_ntop(const struct sockaddr& addr);
+      //static Data inet_ntop(const Tuple& tuple);
+      static int inet_pton(const Data& printableIp, struct in_addr& dst);
+      
+      static bool isIpAddress(const Data& ipAddress);
+      static bool isIpV4Address(const Data& ipAddress);
+      static bool isIpV6Address(const Data& ipAddress);
+
+
+#ifdef USE_IPV6
+      static Data inet_ntop(const struct in6_addr& addr);
+      static int inet_pton(const Data& printableIp, struct in6_addr& dst);
+#endif
+
+
+      //pass-throughs when supported, actual implemenation in the WIN32 case
+      static const char * inet_ntop(int af, const void* src, char* dst, size_t size);      
+      static int inet_pton(int af, const char * src, void * dst);
+
+      // returns pair of interface name, ip address
+      static std::list<std::pair<Data,Data> > getInterfaces(const Data& matchingInterface=Data::Empty);
+
+      // XXXX:0:0:0:YYYY:192.168.2.233 => XXXX::::YYYY:192.168.2.233
+      // so string (case) comparison will work
+      // or something
+      static Data canonicalizeIpV6Address(const Data& ipV6Address);
 };
 
 }
+
 
 #endif
 /* ====================================================================

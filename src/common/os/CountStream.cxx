@@ -1,40 +1,61 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#include "common/os/CountStream.hxx"
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+// Remove warning about 'this' use in initiator list - pointer is only stored
+#if defined(WIN32)
+#pragma warning( disable : 4355 ) // using this in base member initializer list 
+#endif
 
-namespace msrp
+using namespace msrp;
+
+static const int BuffSize(2048);
+// singleton buffer -- not really used
+static char Buffer[BuffSize];
+
+CountBuffer::CountBuffer(size_t& count)
+   : mCount(count)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   mCount = 0;
+   setp(Buffer, Buffer+BuffSize);
 }
 
-#endif
+CountBuffer::~CountBuffer()
+{}
+
+int
+CountBuffer::sync()
+{
+   size_t len = pptr() - pbase();
+   if (len > 0) 
+   {
+      mCount += len;
+      // reset the put buffer
+      setp(Buffer, Buffer + BuffSize);
+   }
+   return 0;
+}
+
+int
+CountBuffer::overflow(int c)
+{
+   sync();
+   if (c != -1) 
+   {
+      pbump(1);
+      return c;
+   }
+   return 0;
+}
+
+CountStream::CountStream(size_t& count)
+   : CountBuffer(count), std::ostream(this)
+{
+}
+
+CountStream::~CountStream()
+{
+   flush();
+}
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -2,11 +2,11 @@
 #include <iostream>
 #include <assert.h>
 
-#include "src/UnknownParameterType.hxx"
-#include "src/MsrpStatusLine.hxx"
-#include "src/os/DataStream.hxx"
-#include "src/os/Logger.hxx"
-#include "src/os/ParseBuffer.hxx"
+#include "common/UnknownParameterType.hxx"
+#include "src/MsrpStatusLine.h"
+#include "common/os/DataStream.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
 
 using namespace msrp;
 using namespace std;

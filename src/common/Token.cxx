@@ -1,40 +1,97 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
+#include "common/Token.hxx"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/os/DnsUtil.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+
+//====================
+// Token
+//===================
+Token::Token() 
+   : ParserCategory(), 
+     mValue() 
+{}
+  
+Token::Token(const Data& d) 
+   : ParserCategory(),
+     mValue(d) 
+{}
+
+Token::Token(HeaderFieldValue* hfv, Headers::Type type) 
+   : ParserCategory(hfv, type), 
+     mValue() 
+{}
+
+Token::Token(const Token& rhs)
+   : ParserCategory(rhs),
+     mValue(rhs.mValue)
+{}
+
+Token&
+Token::operator=(const Token& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mValue = rhs.mValue;
+   }
+   return *this;
 }
 
-#endif
+bool
+Token::operator==(const Token& rhs) const
+{
+   return (value() == rhs.value());
+}
+
+bool
+Token::operator<(const Token& rhs) const
+{
+   return (value() < rhs.value());
+}
+
+Data& 
+Token::value() const 
+{
+   checkParsed(); 
+   return mValue;
+}
+
+void
+Token::parse(ParseBuffer& pb)
+{
+   const char* startMark = pb.skipWhitespace();
+   pb.skipToOneOf(ParseBuffer::Whitespace, Symbols::SEMI_COLON);
+   pb.data(mValue, startMark);
+   pb.skipToChar(Symbols::SEMI_COLON[0]);
+   parseParameters(pb);
+}
+
+ParserCategory* 
+Token::clone() const
+{
+   return new Token(*this);
+}
+
+std::ostream& 
+Token::encodeParsed(std::ostream& str) const
+{
+   str << mValue;
+   encodeParameters(str);
+   return str;
+}
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

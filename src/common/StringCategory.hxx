@@ -1,37 +1,39 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_STRING_CATEGORY_HXX)
+#define MSRP_STRING_CATEGORY_HXX
 
-#include <iostream>
+#include <iosfwd>
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/ParserCategory.hxx"
+#include "common/ParserContainer.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+//====================
+// StringCategory
+//====================
+class StringCategory : public ParserCategory
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+      enum {commaHandling = NoCommaTokenizing};
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
+      StringCategory();
+      explicit StringCategory(const Data& value);
+      StringCategory(HeaderFieldValue* hfv, Headers::Type type);
+      StringCategory(const StringCategory&);
+      StringCategory& operator=(const StringCategory&);
 
+      virtual void parse(ParseBuffer& pb);
+      virtual std::ostream& encodeParsed(std::ostream& str) const;
+      virtual ParserCategory* clone() const;
+
+      Data& value() const;
+
+   private:
+      mutable Data mValue;
+};
+typedef ParserContainer<StringCategory> StringCategories;
+ 
 }
 
 #endif

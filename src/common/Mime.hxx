@@ -1,40 +1,69 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_MIME_HXX)
+#define MSRP_MIME_HXX 
 
-#include <iostream>
+#include <iosfwd>
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/os/HashMap.hxx"
+#include "common/ParserCategory.hxx"
+#include "common/ParserContainer.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+class HeaderFieldValue;
 
-class MD5Stream : private MD5Buffer, public std::ostream
+//====================
+// Mime:
+//====================
+class Mime : public ParserCategory
 {
    public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
+      enum {commaHandling = CommasAllowedOutputCommas};
+
+      Mime();
+      Mime(const Data& type, const Data& subType);
+      Mime(HeaderFieldValue* hfv, Headers::Type type);
+      Mime(const Mime&);
+      Mime& operator=(const Mime&);
+      bool operator<(const Mime& rhs) const;
+      bool operator==(const Mime& rhs) const;
+      bool operator!=(const Mime& rhs) const;
+      
+      Data& type() const;
+      Data& subType() const;
+         
+      virtual void parse(ParseBuffer& pb);
+      virtual ParserCategory* clone() const;
+      virtual std::ostream& encodeParsed(std::ostream& str) const;
    private:
-      //MD5Buffer mStreambuf;
+      mutable Data mType;
+      mutable Data mSubType;
+};
+typedef ParserContainer<Mime> Mimes;
+ 
+}
+
+#if  defined(__INTEL_COMPILER )
+namespace std
+{
+size_t hash_value(const resip::Mime& data);
+}
+
+#elif defined(HASH_MAP_NAMESPACE)  //#elif ( (__GNUC__ == 3) && (__GNUC_MINOR__ >= 1) )
+namespace HASH_MAP_NAMESPACE
+{
+
+template<>
+struct hash<resip::Mime>
+{
+      size_t operator()(const resip::Mime& data) const;
 };
 
 }
+#endif // HASHMAP
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

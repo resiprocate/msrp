@@ -1,37 +1,20 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
-
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
-
-namespace msrp
+#if !defined(MSRP_HEADERHASH_HXX)
+#define MSRP_HEADERHASH_HXX
+namespace msrp 
 {
 
-class MD5Buffer : public std::streambuf
+struct headers { char *name; Headers::Type type; };
+/* maximum key range = 494, duplicates = 0 */
+
+class HeaderHash
 {
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
+private:
+  static inline unsigned int hash (const char *str, unsigned int len);
+public:
+  static struct headers *in_word_set (const char *str, unsigned int len);
 };
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+// NOTE the cxx file for this class is AUTO GENERATED. DO NOT EDIT IT.
+// This file should match it. BUT THIS FILE IS MANUALLY GENERATED.
 }
 
 #endif

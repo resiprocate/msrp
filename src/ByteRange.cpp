@@ -1,9 +1,10 @@
 #if defined(HAVE_CONFIG_H)
-#include "common/config.hxx"
+#include "common/config.h"
 #endif
 
-#include "src/MsrpStatusLine.h"
+#include "src/ByteRange.h"
 #include "common/os/Data.hxx"
+#include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"
 #include "common/os/WinLeakCheck.hxx"
 
@@ -12,145 +13,166 @@ using namespace std;
 
 #define RESIPROCATE_SUBSYSTEM Subsystem::SIP
 
+
 //====================
-// MsrpStatusLine:
-//====================
-MsrpStatusLine::MsrpStatusLine(const Data& transactionId,
-                               const int statusCode)
+// ByteRange
+//===================
+ByteRange::ByteRange() 
    : ParserCategory(), 
-     mTransactionId(transactionId), 
-     mStatusCode(statusCode)
-{
-}
+     mStart(0),
+     mEnd(0),
+     mTotal(0),
+     mEndInt(true),
+     mTotalInt(true)
+{}
+  
+ByteRange::ByteRange(HeaderFieldValue* hfv, Headers::Type type) 
+   : ParserCategory(hfv, type), 
+     mStart(0),
+     mEnd(0),
+     mTotal(0),
+     mEndInt(true),
+     mTotalInt(true)
+{}
 
-MsrpStatusLine::MsrpStatusLine(const Data& transactionId,
-                               const int statusCode,
-                               const Data& phrase)
-   : ParserCategory(),
-     mTransactionId(transactionId),
-     mStatusCode(statusCode),
-     mPhrase(phrase)
-{
-}
-
-MsrpStatusLine::MsrpStatusLine(HeaderFieldValue* hfv, 
-                               Headers::Type type)
-   : ParserCategory(hfv, type),
-     mStatusCode(-1)
-{
-}
-
-MsrpStatusLine::MsrpStatusLine(const MsrpStatusLine& rhs)
+ByteRange::ByteRange(const ByteRange& rhs)
    : ParserCategory(rhs),
-     mTransactionId(rhs.mTransactionId),
-     mStatusCode(rhs.mStatusCode),
-     mPhrase(rhs.mPhrase)
-{
-}
+     mStart(rhs.mStart),
+     mEnd(rhs.mEnd),
+     mTotal(rhs.mTotal),
+     mEndInt(rhs.mEndInt),
+     mTotalInt(rhs.mTotalInt)
+{}
 
-MsrpStatusLine&
-MsrpStatusLine::operator=(const MsrpStatusLine& rhs)
+ByteRange&
+ByteRange::operator=(const ByteRange& rhs)
 {
    if (this != &rhs)
    {
       ParserCategory::operator=(rhs);
-      mTransactionId = rhs.mTransactionId;
-      mStatusCode = rhs.mStatusCode;
-      mPhrase = rhs.mPhrase;
+      mStart = rhs.mStart;
+      mEnd = rhs.mEnd;
+      mTotal = rhs.mTotal;
+      mEndInt = rhs.mEndInt;
+      mTotalInt = rhs.mTotalInt;
    }
    return *this;
 }
 
-MsrpStatusLine::~MsrpStatusLine()
+bool
+ByteRange::operator==(const ByteRange& rhs) const
 {
+   return (start() == rhs.start());
 }
 
-ParserCategory *
-MsrpStatusLine::clone() const
+bool
+ByteRange::operator<(const ByteRange& rhs) const
 {
-   return new MsrpStatusLine(*this);
+   return ( start() < rhs.start());
 }
 
-Data&
-MsrpStatusLine::transactionId()
+bool&
+ByteRange::endInt() const
 {
    checkParsed();
-   return mTransactionId;
+   return mEndInt;
 }
 
-const Data&
-MsrpStatusLine::transactionId() const
+bool&
+ByteRange::totalInt() const
 {
    checkParsed();
-   return mTransactionId;
+   return mTotalInt;
 }
 
 int&
-MsrpStatusLine::statusCode()
+ByteRange::end() const
 {
    checkParsed();
-   return mStatusCode;
+   return mEnd;
 }
 
-const int&
-MsrpStatusLine::statusCode() const
+int&
+ByteRange::total() const
 {
    checkParsed();
-   return mStatusCode;
+   return mTotal;
 }
 
-Data&
-MsrpStatusLine::phrase()
+int&
+ByteRange::start() const 
 {
-   checkParsed();
-   return mPhrase;
+   checkParsed(); 
+   return mStart;
 }
 
-const Data&
-MsrpStatusLine::phrase() const
+void
+ByteRange::parse(ParseBuffer& pb)
 {
-   checkParsed();
-   return mPhrase;
-}
-
-void 
-MsrpStatusLine::parse(ParseBuffer& pb)
-{
-   const char* start;
-   pb.skipWhitespace();
-   pb.skipNonWhitespace();
-   start = pb.skipWhitespace();
-   pb.skipNonWhitespace();
-   pb.data(mTransactionId, start);
-   start = pb.skipWhitespace();
-   mStatusCode = pb.integer();
-   pb.skipNonWhitespace();
-   pb.skipWhitespace();
-   if (!pb.eof())
+   const char* start = pb.skipWhitespace();
+   mStart = pb.integer();
+   pb.skipToChar(Symbols::DASH[0]);
+   start = pb.skipChar(Symbols::DASH[0]);
+   if (*pb.position() == Symbols::STAR[0])
    {
-      start = pb.position();
-      pb.skipNonWhitespace();
-      pb.data(mPhrase, start);
+      mEnd = 0;
+      mEndInt = false;
    }
    else
    {
-      mPhrase = "";
+      mEnd = pb.integer();
+      mEndInt = true;
+   }   
+   pb.skipToChar(Symbols::SLASH[0]);
+   start = pb.skipChar(Symbols::SLASH[0]);
+   if (*pb.position() == Symbols::STAR[0])
+   {
+      mTotal = 0;
+      mTotalInt = false;
+   }
+   else
+   {
+      mTotal = pb.integer();
+      mTotalInt = true;
    }
 }
 
-ostream&
-MsrpStatusLine::encodeParsed(ostream& str) const
+ParserCategory* 
+ByteRange::clone() const
 {
-   str << mTransactionId << Symbols::SPACE << mStatusCode;
-   if ( !mPhrase.empty() ) str << Symbols::SPACE << mPhrase;
+   return new ByteRange(*this);
+}
+
+std::ostream& 
+ByteRange::encodeParsed(std::ostream& str) const
+{
+   str << mStart << Symbols::DASH;
+
+   if ( mEndInt )
+   {
+      str <<  mEnd;
+   }
+   else
+   {
+      str << Symbols::STAR;
+   }
+
+   str << Symbols::SLASH;
+
+   if ( mTotalInt )
+   {
+      str << mTotal;
+   }
+   else
+   {
+      str << Symbols::STAR;
+   }
+
    return str;
 }
 
-
-
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
-
  * 
  * Copyright (c) 2000 Vovida Networks, Inc.  All rights reserved.
  * 

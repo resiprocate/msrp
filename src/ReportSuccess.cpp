@@ -1,40 +1,92 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
+#include "src/ReportSuccess.h"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+//#include "common/os/DnsUtil.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+
+//====================
+// ReportSuccess
+//===================
+ReportSuccess::ReportSuccess() 
+   : ParserCategory(), 
+     mValue(false) 
+{}
+  
+ReportSuccess::ReportSuccess(HeaderFieldValue* hfv, Headers::Type type) 
+   : ParserCategory(hfv, type),
+     mValue(false) 
+{}
+
+ReportSuccess::ReportSuccess(const ReportSuccess& rhs)
+   : ParserCategory(rhs),
+     mValue(rhs.mValue)
+{}
+
+ReportSuccess&
+ReportSuccess::operator=(const ReportSuccess& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mValue = rhs.mValue;
+   }
+   return *this;
 }
 
-#endif
+bool
+ReportSuccess::operator==(const ReportSuccess& rhs) const
+{
+   return (success() == rhs.success());
+}
+
+bool& 
+ReportSuccess::success() const 
+{
+   checkParsed(); 
+   return mValue;
+}
+
+void
+ReportSuccess::parse(ParseBuffer& pb)
+{
+   pb.skipWhitespace();
+   switch (*pb.position())
+   {
+      case 'y':
+         mValue = true;
+         break;
+      case 'n':
+         mValue = false;
+         break;
+      default:
+         pb.fail(__FILE__, __LINE__, "invalid report success");
+   }
+}
+
+ParserCategory* 
+ReportSuccess::clone() const
+{
+   return new ReportSuccess(*this);
+}
+
+std::ostream& 
+ReportSuccess::encodeParsed(std::ostream& str) const
+{
+   str << mValue? "yes" : "no";
+   return str;
+}
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

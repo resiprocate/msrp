@@ -1,40 +1,112 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/OctetContents.hxx"
+//#include "common/SipMessage.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+const OctetContents OctetContents::Empty;
+
+bool
+OctetContents::init()
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   static ContentsFactory<OctetContents> factory;
+   (void)factory;
+   return true;
 }
 
-#endif
+OctetContents::OctetContents()
+   : Contents(getStaticType()),
+     mOctets()
+{}
+
+OctetContents::OctetContents(const Data& octets)
+   : Contents(getStaticType()),
+     mOctets(octets)
+{}
+
+OctetContents::OctetContents(HeaderFieldValue* hfv, const Mime& contentsType)
+   : Contents(hfv, contentsType),
+     mOctets()
+{
+}
+ 
+OctetContents::OctetContents(const Data& octets, const Mime& contentsType)
+   : Contents(contentsType),
+     mOctets(octets)
+{
+}
+
+OctetContents::OctetContents(const OctetContents& rhs)
+   : Contents(rhs),
+     mOctets(rhs.mOctets)
+{
+}
+
+OctetContents::~OctetContents()
+{
+}
+
+OctetContents&
+OctetContents::operator=(const OctetContents& rhs)
+{
+   if (this != &rhs)
+   {
+      Contents::operator=(rhs);
+      mOctets = rhs.mOctets;
+   }
+   return *this;
+}
+
+Contents* 
+OctetContents::clone() const
+{
+   return new OctetContents(*this);
+}
+
+const Mime& 
+OctetContents::getStaticType() 
+{
+   static Mime type("application","octet-stream");
+   return type;
+}
+
+std::ostream& 
+OctetContents::encodeParsed(std::ostream& str) const
+{
+   //DebugLog(<< "OctetContents::encodeParsed " << mOctets);
+   str << mOctets;
+   return str;
+}
+
+void 
+OctetContents::parse(ParseBuffer& pb)
+{
+   //DebugLog(<< "OctetContents::parse: " << pb.position());
+
+   const char* anchor = pb.position();
+   pb.skipToEnd();
+   pb.data(mOctets, anchor);
+
+   //DebugLog("OctetContents::parsed <" << mOctets << ">" );
+}
+
+
+Data
+OctetContents::getBodyData() const
+{
+   checkParsed(); 
+   return mOctets;
+}
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

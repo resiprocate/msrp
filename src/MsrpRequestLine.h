@@ -16,6 +16,9 @@ typedef enum
    defineMsrpMethod(OTHER, "OTHER"),
    MAX_MSRP_METHODS
 } MsrpMethodTypes;
+
+const Data& getMsrpMethodName(MsrpMethodTypes t);
+MsrpMethodTypes getMsrpMethodType(const char* name, int len);
    
 //====================
 // MsrpRequestLine:
@@ -49,8 +52,6 @@ class MsrpRequestLine : public ParserCategory
       mutable Data mOtherMethodName;
       mutable Data mTransactionId;
 
-      const Data& getMsrpMethodName(MsrpMethodTypes t) const;
-      MsrpMethodTypes getMsrpMethodType(const char* name, int len);
 };
  
 }

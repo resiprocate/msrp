@@ -1,40 +1,142 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
+#include "src/Path.h"
+#include "common/ParseException.hxx"
+#include "common/UnknownParameter.hxx"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/os/DnsUtil.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+//====================
+// Path:
+//====================
+Path::Path() : 
+   ParserCategory()
+{}
+
+Path::Path(HeaderFieldValue* hfv,
+           Headers::Type type)
+   : ParserCategory(hfv, type)
+{}
+
+Path::Path(const Path& rhs)
+   : ParserCategory(rhs),
+     mUrl(rhs.mUrl),
+     mUrls(rhs.mUrls)
+{}
+
+
+Path::Path(const MsrpUrl& msrpUrl)
+   : ParserCategory(),
+     mUrl(msrpUrl)
+{}
+
+Path::~Path()
+{}
+
+Path&
+Path::operator=(const Path& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      assert( &rhs != 0 );
+      
+      ParserCategory::operator=(rhs);
+      mUrl = rhs.mUrl;
+      mUrls = rhs.mUrls;
+   }
+   return *this;
 }
 
-#endif
+bool
+Path::operator==(const Path& other) const
+{
+   return mUrl==other.mUrl && mUrls==other.mUrls;
+}
+
+bool
+Path::operator!=(const Path& other) const
+{
+   return !(*this==other);
+}
+
+ParserCategory *
+Path::clone() const
+{
+   return new Path(*this);
+}
+
+const MsrpUrl&
+Path::msrpUrl() const 
+{
+   checkParsed(); 
+   return mUrl;
+}
+
+MsrpUrl&
+Path::msrpUrl()
+{
+   checkParsed(); 
+   return mUrl;
+}
+
+const Data&
+Path::urls() const
+{
+   checkParsed();
+   return mUrls;
+}
+
+Data&
+Path::urls()
+{
+   checkParsed();
+   return mUrls;
+}
+
+void
+Path::parse(ParseBuffer& pb)
+{
+   const char* start;
+   start = pb.skipWhitespace();
+   pb.assertNotEof();   
+   pb.skipNonWhitespace();
+   ParseBuffer pbuf(start, pb.position() - start);
+   mUrl.parse(pbuf);
+   pb.skipWhitespace();
+   if (!pb.eof())
+   {
+      start = pb.position();
+      pb.skipToEnd();
+      pb.data(mUrls, start);
+   }
+   else
+   {
+      mUrls = "";
+   }
+}
+
+ostream&
+Path::encodeParsed(ostream& str) const
+{
+   mUrl.encodeParsed(str);
+   if (!mUrls.empty())
+   {
+      str << Symbols::SPACE << mUrl;
+   }
+   return str;
+}
+
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -5,9 +5,9 @@
 #pragma warning( disable : 4355 ) // using this in base member initializer list 
 #endif
 
-using namespace resip;
+using namespace msrp;
 
-resip::MD5Buffer::MD5Buffer()
+MD5Buffer::MD5Buffer()
 {
    MD5Init(&mContext);
    setp(mBuf, mBuf + sizeof(mBuf));
@@ -43,11 +43,11 @@ MD5Buffer::overflow(int c)
    return 0;
 }
 
-msrp::Data 
+Data 
 MD5Buffer::getHex()
 {
    MD5Final((unsigned char*)mBuf, &mContext);
-   msrp::Data digest(msrp::Data::Share, (const char*)mBuf,16);
+   Data digest(Data::Share, (const char*)mBuf,16);
    return digest.hex();   
 }
 
@@ -59,7 +59,7 @@ MD5Stream::MD5Stream()
 MD5Stream::~MD5Stream()
 {}
 
-msrp::Data 
+Data 
 MD5Stream::getHex()
 {
    flush();

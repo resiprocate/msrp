@@ -1,42 +1,125 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
+#include "src/Status.h"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+//====================
+// Status:
+//====================
+Status::Status()
+   : ParserCategory(),
+     mStatusCode(-1)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
 }
 
-#endif
+Status::Status(HeaderFieldValue* hfv, 
+               Headers::Type type)
+   : ParserCategory(hfv, type),
+     mStatusCode(-1)
+{
+}
+
+Status::Status(const Status& rhs)
+   : ParserCategory(rhs),
+     mStatusCode(rhs.mStatusCode),
+     mReason(rhs.mReason)
+{
+}
+
+Status&
+Status::operator=(const Status& rhs)
+{
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mStatusCode = rhs.mStatusCode;
+      mReason = rhs.mReason;
+   }
+   return *this;
+}
+
+Status::~Status()
+{
+}
+
+ParserCategory *
+Status::clone() const
+{
+   return new Status(*this);
+}
+
+int&
+Status::statusCode()
+{
+   checkParsed();
+   return mStatusCode;
+}
+
+const int&
+Status::statusCode() const
+{
+   checkParsed();
+   return mStatusCode;
+}
+
+Data&
+Status::reason()
+{
+   checkParsed();
+   return mReason;
+}
+
+const Data&
+Status::reason() const
+{
+   checkParsed();
+   return mReason;
+}
+
+void 
+Status::parse(ParseBuffer& pb)
+{
+   const char* start;
+   pb.skipWhitespace();
+   pb.skipNonWhitespace();
+   start = pb.skipWhitespace();
+   mStatusCode = pb.integer();
+   pb.skipNonWhitespace();
+   pb.skipWhitespace();
+   if (!pb.eof())
+   {
+      start = pb.position();
+      pb.skipToEnd();
+      pb.data(mReason, start);
+   }
+   else
+   {
+      mReason = "";
+   }
+}
+
+ostream&
+Status::encodeParsed(ostream& str) const
+{
+   str << mStatusCode;
+   if ( !mReason.empty() ) str << Symbols::SPACE << mReason;
+   return str;
+}
+
+
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
+
  * 
  * Copyright (c) 2000 Vovida Networks, Inc.  All rights reserved.
  * 

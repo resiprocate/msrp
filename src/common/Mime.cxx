@@ -2,8 +2,10 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/MsrpStatusLine.h"
+#include "common/Mime.hxx"
 #include "common/os/Data.hxx"
+#include "common/os/DnsUtil.hxx"
+#include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"
 #include "common/os/WinLeakCheck.hxx"
 
@@ -13,144 +15,134 @@ using namespace std;
 #define RESIPROCATE_SUBSYSTEM Subsystem::SIP
 
 //====================
-// MsrpStatusLine:
+// MIME
 //====================
-MsrpStatusLine::MsrpStatusLine(const Data& transactionId,
-                               const int statusCode)
+Mime::Mime()
    : ParserCategory(), 
-     mTransactionId(transactionId), 
-     mStatusCode(statusCode)
-{
-}
+     mType(),
+     mSubType() 
+{}
+  
+Mime::Mime(const Data& type, const Data& subType) 
+   : ParserCategory(), 
+     mType(type), 
+     mSubType(subType) 
+{}
 
-MsrpStatusLine::MsrpStatusLine(const Data& transactionId,
-                               const int statusCode,
-                               const Data& phrase)
-   : ParserCategory(),
-     mTransactionId(transactionId),
-     mStatusCode(statusCode),
-     mPhrase(phrase)
-{
-}
-
-MsrpStatusLine::MsrpStatusLine(HeaderFieldValue* hfv, 
-                               Headers::Type type)
+Mime::Mime(HeaderFieldValue* hfv, Headers::Type type)
    : ParserCategory(hfv, type),
-     mStatusCode(-1)
-{
-}
+     mType(), 
+     mSubType()
+{}
 
-MsrpStatusLine::MsrpStatusLine(const MsrpStatusLine& rhs)
+Mime::Mime(const Mime& rhs)
    : ParserCategory(rhs),
-     mTransactionId(rhs.mTransactionId),
-     mStatusCode(rhs.mStatusCode),
-     mPhrase(rhs.mPhrase)
-{
-}
+     mType(rhs.mType),
+     mSubType(rhs.mSubType)
+{}
 
-MsrpStatusLine&
-MsrpStatusLine::operator=(const MsrpStatusLine& rhs)
+Mime&
+Mime::operator=(const Mime& rhs)
 {
    if (this != &rhs)
    {
       ParserCategory::operator=(rhs);
-      mTransactionId = rhs.mTransactionId;
-      mStatusCode = rhs.mStatusCode;
-      mPhrase = rhs.mPhrase;
+      mType = rhs.mType;
+      mSubType = rhs.mSubType;
    }
    return *this;
 }
 
-MsrpStatusLine::~MsrpStatusLine()
+bool
+Mime::operator<(const Mime& rhs) const
 {
-}
-
-ParserCategory *
-MsrpStatusLine::clone() const
-{
-   return new MsrpStatusLine(*this);
-}
-
-Data&
-MsrpStatusLine::transactionId()
-{
-   checkParsed();
-   return mTransactionId;
-}
-
-const Data&
-MsrpStatusLine::transactionId() const
-{
-   checkParsed();
-   return mTransactionId;
-}
-
-int&
-MsrpStatusLine::statusCode()
-{
-   checkParsed();
-   return mStatusCode;
-}
-
-const int&
-MsrpStatusLine::statusCode() const
-{
-   checkParsed();
-   return mStatusCode;
-}
-
-Data&
-MsrpStatusLine::phrase()
-{
-   checkParsed();
-   return mPhrase;
-}
-
-const Data&
-MsrpStatusLine::phrase() const
-{
-   checkParsed();
-   return mPhrase;
-}
-
-void 
-MsrpStatusLine::parse(ParseBuffer& pb)
-{
-   const char* start;
-   pb.skipWhitespace();
-   pb.skipNonWhitespace();
-   start = pb.skipWhitespace();
-   pb.skipNonWhitespace();
-   pb.data(mTransactionId, start);
-   start = pb.skipWhitespace();
-   mStatusCode = pb.integer();
-   pb.skipNonWhitespace();
-   pb.skipWhitespace();
-   if (!pb.eof())
+   if (isLessThanNoCase(type(), rhs.type()))
    {
-      start = pb.position();
-      pb.skipNonWhitespace();
-      pb.data(mPhrase, start);
+      return true;
    }
-   else
+   else if (isLessThanNoCase(rhs.type(), type()))
    {
-      mPhrase = "";
+      return false;
    }
+   return isLessThanNoCase(subType(), rhs.subType());
 }
 
-ostream&
-MsrpStatusLine::encodeParsed(ostream& str) const
+bool
+Mime::operator==(const Mime& rhs) const
 {
-   str << mTransactionId << Symbols::SPACE << mStatusCode;
-   if ( !mPhrase.empty() ) str << Symbols::SPACE << mPhrase;
+   return (isEqualNoCase(type(), rhs.type()) &&
+           isEqualNoCase(subType(), rhs.subType()));
+}
+
+bool
+Mime::operator!=(const Mime& rhs) const
+{
+   return !(*this == rhs);
+}
+
+Data& 
+Mime::type() const 
+{
+   checkParsed(); 
+   return mType;
+}
+
+Data& Mime::subType() const 
+{
+   checkParsed(); 
+   return mSubType;
+}
+
+void
+Mime::parse(ParseBuffer& pb)
+{
+   const char* anchor = pb.skipWhitespace();
+
+   pb.skipToOneOf(ParseBuffer::Whitespace, Symbols::SLASH);
+   pb.data(mType, anchor);
+
+   pb.skipWhitespace();
+   pb.skipChar(Symbols::SLASH[0]);
+
+   anchor = pb.skipWhitespace();
+   pb.skipToOneOf(ParseBuffer::Whitespace, Symbols::SEMI_COLON);
+   pb.data(mSubType, anchor);
+
+   pb.skipWhitespace();
+   parseParameters(pb);
+}
+
+ParserCategory* 
+Mime::clone() const
+{
+   return new Mime(*this);
+}
+
+std::ostream&
+Mime::encodeParsed(std::ostream& str) const
+{
+   str << mType << Symbols::SLASH << mSubType ;
+   encodeParameters(str);
    return str;
 }
 
+#if defined(HASH_MAP_NAMESPACE)
+size_t HASH_MAP_NAMESPACE::hash<resip::Mime>::operator()(const resip::Mime& data) const
+{
+   return data.type().caseInsensitivehash() ^ data.subType().caseInsensitivehash();
+}
+#endif
+
+#if defined(__INTEL_COMPILER)
+size_t std::hash_value(const resip::Mime& data)
+{
+   return data.type().caseInsensitivehash() ^ data.subType().caseInsensitivehash();
+}
+#endif
 
 
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
-
  * 
  * Copyright (c) 2000 Vovida Networks, Inc.  All rights reserved.
  * 

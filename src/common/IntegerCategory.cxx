@@ -1,40 +1,105 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/IntegerCategory.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+//====================
+// Integer:
+//====================
+IntegerCategory::IntegerCategory()
+   : ParserCategory(), 
+     mValue(0), 
+     mComment() 
+{}
+
+IntegerCategory::IntegerCategory(HeaderFieldValue* hfv, Headers::Type type)
+   : ParserCategory(hfv, type), 
+     mValue(0), 
+     mComment() 
+{}
+
+IntegerCategory::IntegerCategory(const IntegerCategory& rhs)
+   : ParserCategory(rhs),
+     mValue(rhs.mValue),
+     mComment(rhs.mComment)
+{}
+
+IntegerCategory&
+IntegerCategory::operator=(const IntegerCategory& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mValue = rhs.mValue;
+      mComment = rhs.mComment;
+   }
+   return *this;
 }
 
-#endif
+ParserCategory* IntegerCategory::clone() const
+{
+   return new IntegerCategory(*this);
+}
+
+int& IntegerCategory::value() const 
+{
+   checkParsed(); 
+   return mValue;
+}
+
+Data& 
+IntegerCategory::comment() const 
+{
+   checkParsed(); 
+   return mComment;
+}
+
+void
+IntegerCategory::parse(ParseBuffer& pb)
+{
+   const char* start = pb.skipWhitespace();
+   mValue = pb.integer();
+   pb.skipToChar('(');
+   if (!pb.eof())
+   {
+      start = pb.skipChar();
+      pb.skipToEndQuote(')');
+      pb.data(mComment, start);
+      pb.skipChar();
+   }
+   else
+   {
+      pb.reset(start);
+      start = pb.skipNonWhitespace();
+   }
+   
+   parseParameters(pb);
+}
+
+std::ostream& 
+IntegerCategory::encodeParsed(std::ostream& str) const
+{
+  str << mValue;
+
+  if (!mComment.empty())
+  {
+     str << "(" << mComment << ")";
+  }
+  
+  encodeParameters(str);
+  return str;
+}
+
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -1,40 +1,23 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_PARSERCATEGORIES_HXX)
+#define MSRP_PARSERCATEGORIES_HXX 
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+//#warning "DO NOT USE ParserCategories.hxx"
 
-namespace msrp
-{
+#include "common/IntegerCategory.hxx"
+#include "common/Mime.hxx"
+#include "src/MsrpRequestLine.h"
+#include "src/MsrpStatusLine.h"
+#include "common/StringCategory.hxx"
+#include "common/Token.hxx"
+#include "src/Path.h"
+#include "src/Status.h"
+#include "src/ByteRange.h"
+#include "src/ReportSuccess.h"
+#include "src/ReportFailure.h"
 
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
-}
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

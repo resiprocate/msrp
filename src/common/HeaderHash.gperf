@@ -1,0 +1,28 @@
+%{
+#include <string.h>
+#include <ctype.h>
+#include "src/HeaderTypes.hxx"
+
+namespace msrp
+{
+using namespace std;
+%}
+struct headers { char *name; Headers::Type type; };
+%%
+To-Path, Headers::ToPath
+From-Path, Headers::FromPath
+Message-ID, Headers::MessageId
+Report-Success, Headers::ReportSuccess
+Report-Failure, Headers::ReportFailure
+Byte-Range, Headers::ByteRange
+Status, Headers::Status
+Content-Encoding, Headers::ContentEncoding
+Content-ID, Headers::ContentId
+Content-Transfer-Encoding, Headers::ContentTransferEncoding
+Content-Type, Headers::ContentType
+Content-Length, Headers::ContentLength
+Content-Disposition, Headers::ContentDisposition
+MIME-Version, Headers::MIMEVersion
+Content-Language, Headers::ContentLanguage
+%%
+}

@@ -1,40 +1,45 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_COUNTSTREAM_HXX)
+#define MSRP_COUNTSTREAM_HXX 
 
 #include <iostream>
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
 
+// !dlb! Much more efficient to implement ostream::operator<<
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+class CountBuffer : public std::streambuf
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
+      CountBuffer(size_t& count);
+      virtual ~CountBuffer();
+
+      unsigned long size() const {return mCount;}
+
    protected:
       virtual int sync();
       virtual int overflow(int c = -1);
+
    private:
-      char mBuf[64];
-      MD5Context mContext;
+      size_t& mCount;
 };
 
-class MD5Stream : private MD5Buffer, public std::ostream
+class CountStream : private CountBuffer, public std::ostream
 {
    public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
+      CountStream(size_t& count);
+      ~CountStream();
+
+      unsigned long size() const {return CountBuffer::size();}
+
    private:
-      //MD5Buffer mStreambuf;
+      //CountBuffer mStreamBuf;
 };
 
 }
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

@@ -1,37 +1,52 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_PATH__HXX)
+#define MSRP_PATH__HXX
 
-#include <iostream>
+#include <iosfwd>
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/ParserCategory.hxx"
+#include "common/ParserContainer.hxx"
+#include "src/MsrpUrl.h"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+//====================
+// Path:
+//====================
+class Path : public ParserCategory
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
+      enum {commaHandling = CommasAllowedOutputCommas};
+
+      Path();
+      Path(HeaderFieldValue* hfv, Headers::Type type);
+      explicit Path(const MsrpUrl&);
+
+      Path(const Path&);
+      Path& operator=(const Path&);
+
+      virtual ~Path();
+      
+      MsrpUrl& msrpUrl();
+      const MsrpUrl& msrpUrl() const;
+
+      Data& urls();
+      const Data& urls() const;
+            
+      virtual void parse(ParseBuffer& pb);
+      virtual ParserCategory* clone() const;
+      virtual std::ostream& encodeParsed(std::ostream& str) const;
+
+      bool operator==(const Path& other) const;
+      bool operator!=(const Path& other) const;      
+
    protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+      mutable MsrpUrl mUrl;
+      mutable Data mUrls;
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
 };
-
+typedef ParserContainer<Path> Paths;
+ 
 }
 
 #endif

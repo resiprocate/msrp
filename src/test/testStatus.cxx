@@ -1,40 +1,39 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
-
+#include <memory>
 #include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include <assert.h>
 
-namespace msrp
+#include "src/Status.h"
+#include "common/os/DataStream.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::TEST
+
+int
+main(int argc, char* argv[])
 {
+   Log::Level l = Log::Debug;
+   Log::initialize(Log::Cerr, l, argv[0]);
 
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+   {
+      Status status;
+      Data data(" 000 200 OK");
+      
+      ParseBuffer pb(data.data(), data.size());
+      status.parse(pb);
+      assert(status.statusCode()==200);
+      assert(status.reason()=="OK");
+   }
+   
+   {
+   }   
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   cerr << endl << "All OK" << endl;
+   return 0;
 }
-
-#endif
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 
@@ -84,3 +83,4 @@ class MD5Stream : private MD5Buffer, public std::ostream
  * <http://www.vovida.org/>.
  *
  */
+

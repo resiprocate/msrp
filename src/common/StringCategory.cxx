@@ -1,40 +1,77 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
-#include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/StringCategory.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+//====================
+// StringCategory
+//====================
+StringCategory::StringCategory() : 
+   ParserCategory(), 
+   mValue() 
+{}
+
+StringCategory::StringCategory(const Data& value)
+   : ParserCategory(),
+     mValue(value)
+{}
+
+StringCategory::StringCategory(HeaderFieldValue* hfv, Headers::Type type)
+   : ParserCategory(hfv, type),
+     mValue()
+{}
+
+StringCategory::StringCategory(const StringCategory& rhs)
+   : ParserCategory(rhs),
+     mValue(rhs.mValue)
+{}
+
+StringCategory&
+StringCategory::operator=(const StringCategory& rhs)
 {
-
-class MD5Buffer : public std::streambuf
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mValue = rhs.mValue;
+   }
+   return *this;
+}
+ParserCategory* 
+StringCategory::clone() const
 {
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   return new StringCategory(*this);
 }
 
-#endif
+void 
+StringCategory::parse(ParseBuffer& pb)
+{
+   const char* anchor = pb.position();
+   pb.skipToEnd();
+   pb.data(mValue, anchor);
+}
+
+std::ostream& 
+StringCategory::encodeParsed(std::ostream& str) const
+{
+   str << mValue;
+   return str;
+}
+
+Data& 
+StringCategory::value() const 
+{
+   checkParsed(); 
+   return mValue;
+}
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

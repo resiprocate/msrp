@@ -1,40 +1,108 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if defined(HAVE_CONFIG_H)
+#include "common/config.hxx"
+#endif
 
-#include <iostream>
+#include "src/ReportFailure.h"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
+#include "common/os/Logger.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
-namespace msrp
+using namespace msrp;
+using namespace std;
+
+#define RESIPROCATE_SUBSYSTEM Subsystem::SIP
+
+
+//====================
+// ReportFailure
+//===================
+ReportFailure::ReportFailure() 
+   : ParserCategory(), 
+     mValue(Yes) 
+{}
+  
+ReportFailure::ReportFailure(HeaderFieldValue* hfv, Headers::Type type) 
+   : ParserCategory(hfv, type),
+     mValue(Yes) 
+{}
+
+ReportFailure::ReportFailure(const ReportFailure& rhs)
+   : ParserCategory(rhs),
+     mValue(rhs.mValue)
+{}
+
+ReportFailure&
+ReportFailure::operator=(const ReportFailure& rhs)
 {
-
-class MD5Buffer : public std::streambuf
-{
-   public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
-
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
-};
-
+   if (this != &rhs)
+   {
+      ParserCategory::operator=(rhs);
+      mValue = rhs.mValue;
+   }
+   return *this;
 }
 
-#endif
+bool
+ReportFailure::operator==(const ReportFailure& rhs) const
+{
+   return (result() == rhs.result());
+}
+
+ReportFailure::Result& 
+ReportFailure::result() const
+{
+   checkParsed(); 
+   return mValue;
+}
+
+void
+ReportFailure::parse(ParseBuffer& pb)
+{
+   pb.skipWhitespace();
+   switch (*pb.position())
+   {
+      case 'y':
+         mValue = Yes;
+         break;
+      case 'n':
+         mValue = No;
+         break;
+      case 'p':
+         mValue = Partial;
+         break;
+      default:
+         pb.fail(__FILE__, __LINE__, "invalid report failure");
+   }
+}
+
+ParserCategory* 
+ReportFailure::clone() const
+{
+   return new ReportFailure(*this);
+}
+
+std::ostream& 
+ReportFailure::encodeParsed(std::ostream& str) const
+{
+   switch ( mValue )
+   {
+      case Yes:
+         str << "yes";
+         break;
+      case No:
+         str << "no";
+         break;
+      case Partial:
+         str << "partial";
+         break;
+      default:
+         break;
+   }
+   
+   return str;
+}
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

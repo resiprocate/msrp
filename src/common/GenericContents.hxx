@@ -1,40 +1,31 @@
-#if !defined(MSRP_MD5STREAM_HXX)
-#define MSRP_MD5STREAM_HXX 
+#if !defined(MSRP_GENERICCONTENTS_HXX)
+#define MSRP_GENERICCONTENTS_HXX
 
-#include <iostream>
+#include "common/PlainContents.hxx"
 #include "common/os/Data.hxx"
-#include "common/os/vmd5.hxx"
 
 namespace msrp
 {
 
-class MD5Buffer : public std::streambuf
+// Note: not added to ContentsFactory
+class GenericContents : public PlainContents
 {
    public:
-      MD5Buffer();
-      virtual ~MD5Buffer();
-      Data getHex();
-   protected:
-      virtual int sync();
-      virtual int overflow(int c = -1);
-   private:
-      char mBuf[64];
-      MD5Context mContext;
-};
+      GenericContents();
+      GenericContents(const Data& text);
+      GenericContents(HeaderFieldValue* hfv, const Mime& contentType);
+      GenericContents(const Data& data, const Mime& contentType);
+      GenericContents(const GenericContents& rhs);
+      virtual ~GenericContents();
+      GenericContents& operator=(const GenericContents& rhs);
 
-class MD5Stream : private MD5Buffer, public std::ostream
-{
-   public:
-      MD5Stream();
-      ~MD5Stream();
-      Data getHex();
-   private:
-      //MD5Buffer mStreambuf;
+      virtual Contents* clone() const;
 };
 
 }
 
 #endif
+
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
  * 

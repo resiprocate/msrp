@@ -2,10 +2,8 @@
 #include "common/config.hxx"
 #endif
 
-#include "MsrpRequestLine.h"
-//#include "src/UnknownParameter.hxx"
+#include "src/MsrpRequestLine.h"
 #include "common/os/Data.hxx"
-//#include "src/os/DnsUtil.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"
 #include "common/os/WinLeakCheck.hxx"
@@ -26,6 +24,26 @@ Data MsrpMethodNames[] =
    defineMsrpMethod(OTHER, "OTHER")
 };
 
+}
+const Data&
+msrp::getMsrpMethodName(MsrpMethodTypes t)
+{
+   if (t < SEND || t >= MAX_MSRP_METHODS)
+   {
+      t = OTHER;
+   }
+   
+   return MsrpMethodNames[t];
+}
+
+MsrpMethodTypes
+msrp::getMsrpMethodType(const char* name,
+                        int len)
+{
+   if (0 == len) return OTHER;
+   if ('S' == name[0]) return SEND;
+   if ('R' == name[0]) return REPORT;
+   return OTHER;
 }
 
 
@@ -159,32 +177,10 @@ MsrpRequestLine::encodeParsed(ostream& str) const
    return str;
 }
 
-const Data&
-MsrpRequestLine::getMsrpMethodName(MsrpMethodTypes t) const
-{
-   if (t < SEND || t >= MAX_MSRP_METHODS)
-   {
-      t = OTHER;
-   }
-   
-   return MsrpMethodNames[t];
-}
-
-MsrpMethodTypes
-MsrpRequestLine::getMsrpMethodType(const char* name,
-                                   int len)
-{
-   if (0 == len) return OTHER;
-   if ('S' == name[0]) return SEND;
-   if ('R' == name[0]) return REPORT;
-   return OTHER;
-}
-
 
 
 /* ====================================================================
  * The Vovida Software License, Version 1.0 
-
  * 
  * Copyright (c) 2000 Vovida Networks, Inc.  All rights reserved.
  * 
