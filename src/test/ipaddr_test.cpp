@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <assert.h>
 #include "msrp_address.h"
 
 int main(int argc, char **argv)
@@ -41,6 +42,13 @@ int main(int argc, char **argv)
   }
   buf.str("");
 
+  assert(addr1.getAddressType() == msrp::Address::IPV4);
+  assert(addr2.getAddressType() == msrp::Address::IPV4);
+  assert(addr3.getAddressType() == msrp::Address::IPV4);
+
+  assert(addr1.getPort() == 5060);
+  assert(addr2.getPort() == 1234);
+  assert(addr3.getPort() == 2);
 
   return 0;
 }

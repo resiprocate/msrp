@@ -13,7 +13,7 @@
 SRC := $(wildcard *.cpp)
 CPPFLAGS += -Wall -g
 
-all: libmsrp.a
+all: libmsrp.a test
 
 libmsrp.a: $(SRC:.cpp=.o)
 	$(AR) r $@ $^
@@ -24,6 +24,10 @@ DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 	@echo Generating dependencies for $*.o
 	@$(CPP) $(CFLAGS) -MM $< -MT $*.o -MT .$*.d > $@
 
-.PHONY: clean
+.PHONY: clean test
 clean:
 	$(RM) *.o *.a .*.d
+	$(MAKE) -C test clean
+
+test:
+	$(MAKE) -C test

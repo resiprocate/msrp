@@ -2,12 +2,14 @@
 #include <iostream>
 
 msrp::Ipv4Address::Ipv4Address(const struct sockaddr_in &address)
+  : Address(IPV4)
 {
   addr = address;
 }
 
 msrp::Ipv4Address::Ipv4Address(const struct in_addr &address, 
                                unsigned short port)
+  : Address(IPV4)
 {
   addr.sin_family = AF_INET;
   addr.sin_addr = address;
@@ -15,6 +17,7 @@ msrp::Ipv4Address::Ipv4Address(const struct in_addr &address,
 }
 
 msrp::Ipv4Address::Ipv4Address(const std::string &name, unsigned short port)
+  : Address(IPV4)
 {
   struct in_addr address;
   address.s_addr = inet_addr(name.c_str());
@@ -25,6 +28,7 @@ msrp::Ipv4Address::Ipv4Address(const std::string &name, unsigned short port)
 }
 
 msrp::Ipv4Address::Ipv4Address(const std::string &namePort)
+  : Address(IPV4)
 {
   std::string::size_type colon = namePort.find_last_of(':');
 
