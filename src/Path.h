@@ -5,7 +5,7 @@
 #include "common/os/Data.hxx"
 #include "common/ParserCategory.hxx"
 #include "common/ParserContainer.hxx"
-#include "src/MsrpUrl.h"
+#include "MsrpUrl.h"
 
 namespace msrp
 {

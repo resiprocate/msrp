@@ -1,7 +1,7 @@
 #ifndef msrp_Log_hx
 #define msrp_Log_hx
 
-#include "src/common/os/Data.hxx"
+#include "common/os/Data.hxx"
 
 #ifndef WIN32
 #include <syslog.h>

@@ -5,7 +5,7 @@
 #include <set>
 
 #include "common/Symbols.hxx"
-#include "src/MsrpUrl.h"
+#include "MsrpUrl.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/DnsUtil.hxx"
 #include "common/os/Logger.hxx"

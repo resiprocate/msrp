@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/ReportFailure.h"
+#include "ReportFailure.h"
 #include "common/os/Data.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"

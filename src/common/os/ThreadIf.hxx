@@ -1,7 +1,7 @@
 #if !defined(RESIP_THREADIF_HXX)
 #define RESIP_THREADIF_HXX
 
-#include "src/common/os/Socket.hxx"
+#include "common/os/Socket.hxx"
 
 #ifdef WIN32
 #  include <BaseTsd.h>

@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/MsrpRequestLine.h"
+#include "MsrpRequestLine.h"
 #include "common/os/Data.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"

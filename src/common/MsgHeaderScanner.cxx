@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include "common/HeaderTypes.hxx"
-#include "src/MsrpMessage.h"
+#include "MsrpMessage.h"
 #include "common/MsgHeaderScanner.hxx"
 
 namespace msrp 

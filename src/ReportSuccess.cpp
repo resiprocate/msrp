@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/ReportSuccess.h"
+#include "ReportSuccess.h"
 #include "common/os/Data.hxx"
 //#include "common/os/DnsUtil.hxx"
 #include "common/os/Logger.hxx"

@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/Status.h"
+#include "Status.h"
 #include "common/os/Data.hxx"
 #include "common/os/ParseBuffer.hxx"
 #include "common/os/WinLeakCheck.hxx"

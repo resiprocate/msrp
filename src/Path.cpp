@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "src/Path.h"
+#include "Path.h"
 #include "common/ParseException.hxx"
 #include "common/UnknownParameter.hxx"
 #include "common/os/Data.hxx"

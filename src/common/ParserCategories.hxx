@@ -5,15 +5,15 @@
 
 #include "common/IntegerCategory.hxx"
 #include "common/Mime.hxx"
-#include "src/MsrpRequestLine.h"
-#include "src/MsrpStatusLine.h"
+#include "MsrpRequestLine.h"
+#include "MsrpStatusLine.h"
 #include "common/StringCategory.hxx"
 #include "common/Token.hxx"
-#include "src/Path.h"
-#include "src/Status.h"
-#include "src/ByteRange.h"
-#include "src/ReportSuccess.h"
-#include "src/ReportFailure.h"
+#include "Path.h"
+#include "Status.h"
+#include "ByteRange.h"
+#include "ReportSuccess.h"
+#include "ReportFailure.h"
 
 
 #endif

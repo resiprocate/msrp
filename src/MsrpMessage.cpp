@@ -5,7 +5,7 @@
 #include "common/Contents.hxx"
 #include "common/OctetContents.hxx"
 #include "common/HeaderFieldValueList.hxx"
-#include "src/MsrpMessage.h"
+#include "MsrpMessage.h"
 #include "common/UnknownHeaderType.hxx"
 #include "common/os/Coders.hxx"
 #include "common/os/CountStream.hxx"
