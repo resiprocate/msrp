@@ -3,42 +3,37 @@
 # if things get complex in any way. We may ultimately want to
 # move to an autotools based system.
 #
-# Currently, it just collects everything with a ".cpp"
+# Currently, it just collects everything with a ".cxx"
 # extension, compiles it, and gloms it together into a
 # library. It does basic dependency management.
 #
 # Note that this makefile requires gcc 3.0.0 or later, and
 # relies on gnu make.
 
-all: common/libcommon.a libmsrp.a test
+all: libcommon.a
 
-SRC := $(wildcard *.cpp)
-CPPFLAGS += -Wall -g
+SRC := $(wildcard *.cxx os/*.cxx)
+CPPFLAGS += -Wall -g -I..
 
-DEPS := $(patsubst %.cpp, .%.d, $(SRC))
+DEPS := $(patsubst %.cxx, %.d, $(SRC))
 
-OBJS := $(patsubst %.cpp, %.o, $(SRC))
+OBJS := $(patsubst %.cxx, %.o, $(SRC))
 
-libmsrp.a: $(OBJS)
+libcommon.a: $(OBJS)
 	$(AR) r $@ $^
 
 -include $(DEPS)
 
-.%.d: %.cpp
+%.d: %.cxx
 	@echo Generating dependencies for $*.o
 	@$(CPP) $(CPPFLAGS) -MM $< -MT $*.o -MT .$*.d > $@
 
-.PHONY: clean test
-clean:
-	$(RM) *.o *.a .*.d
-	$(MAKE) -C test clean
-	$(MAKE) -C common clean
+%.o: %.cxx
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
-test:
-	$(MAKE) -C test
+.PHONY: clean
+clean:
+	$(RM) *.o *.a *.d os/*.o os/*.d
 
 show.%:
 	@echo $*=$($*)
-
-common/libcommon.a: $(wildcard common/*.{hxx,cxx} common/os/*.{hxx,cxx})
-	make -C common libcommon.a

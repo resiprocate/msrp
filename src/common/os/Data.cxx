@@ -3,11 +3,11 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "src/os/Data.hxx"
-#include "src/os/ParseBuffer.hxx"
-#include "src/os/vmd5.hxx"
-#include "src/os/Coders.hxx"
-#include "src/os/WinLeakCheck.hxx"
+#include "common/os/Data.hxx"
+#include "common/os/ParseBuffer.hxx"
+#include "common/os/vmd5.hxx"
+#include "common/os/Coders.hxx"
+#include "common/os/WinLeakCheck.hxx"
 
 using namespace msrp;
 using namespace std;

@@ -7,7 +7,7 @@
 
 using namespace resip;
 
-MD5Buffer::MD5Buffer()
+resip::MD5Buffer::MD5Buffer()
 {
    MD5Init(&mContext);
    setp(mBuf, mBuf + sizeof(mBuf));
@@ -43,11 +43,11 @@ MD5Buffer::overflow(int c)
    return 0;
 }
 
-Data 
+msrp::Data 
 MD5Buffer::getHex()
 {
    MD5Final((unsigned char*)mBuf, &mContext);
-   Data digest(Data::Share, (const char*)mBuf,16);
+   msrp::Data digest(msrp::Data::Share, (const char*)mBuf,16);
    return digest.hex();   
 }
 
@@ -59,7 +59,7 @@ MD5Stream::MD5Stream()
 MD5Stream::~MD5Stream()
 {}
 
-Data 
+msrp::Data 
 MD5Stream::getHex()
 {
    flush();
