@@ -13,13 +13,13 @@
 SRC := $(wildcard *.cpp)
 CPPFLAGS += -Wall -g
 
-all: msrp.a
+all: libmsrp.a
 
-msrp.a: $(SRC:.cpp=.o)
+libmsrp.a: $(SRC:.cpp=.o)
 	$(AR) r $@ $^
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
-#-include $(DEPS)
+-include $(DEPS)
 .%.d: %.cpp
 	@echo Generating dependencies for $*.o
 	@$(CPP) $(CFLAGS) -MM $< -MT $*.o -MT .$*.d > $@
