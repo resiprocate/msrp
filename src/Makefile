@@ -10,19 +10,23 @@
 # Note that this makefile requires gcc 3.0.0 or later, and
 # relies on gnu make.
 
+all: libmsrp.a test
+
 SRC := $(wildcard *.cpp)
 CPPFLAGS += -Wall -g
 
-all: libmsrp.a test
+DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 
-libmsrp.a: $(SRC:.cpp=.o)
+OBJS := $(patsubst %.cpp, %.o, $(SRC))
+
+libmsrp.a: $(OBJS)
 	$(AR) r $@ $^
 
-DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 -include $(DEPS)
+
 .%.d: %.cpp
 	@echo Generating dependencies for $*.o
-	@$(CPP) $(CFLAGS) -MM $< -MT $*.o -MT .$*.d > $@
+	@$(CPP) $(CPPFLAGS) -MM $< -MT $*.o -MT .$*.d > $@
 
 .PHONY: clean test
 clean:
@@ -31,3 +35,6 @@ clean:
 
 test:
 	$(MAKE) -C test
+
+show.%:
+	@echo $*=$($*)
