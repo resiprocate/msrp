@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "msrp_constants.h"
-#include "msrp_callback.h"
-#include "msrp_session.h"
+#include "Constants.h"
+#include "Callback.h"
+#include "Session.h"
 
 namespace msrp
 {

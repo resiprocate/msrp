@@ -1,7 +1,7 @@
 #ifndef _MSRP_TCP_TRANSPORT
 #define _MSRP_TCP_TRANSPORT 1
 
-#include "msrp_transport.h"
+#include "Transport.h"
 
 namespace msrp
 {

@@ -1,8 +1,8 @@
 #ifndef _MSRP_SESSION
 #define _MSRP_SESSION 1
 
-#include "msrp_constants.h"
-#include "msrp_callback.h"
+#include "Constants.h"
+#include "Callback.h"
 
 namespace msrp
 {

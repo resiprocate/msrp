@@ -2,7 +2,7 @@
 #include "common/config.hxx"
 #endif
 
-#include "msrp_status_line.h"
+#include "MsrpStatusLine.h"
 #include "common/os/Data.hxx"
 #include "common/os/ParseBuffer.hxx"
 #include "common/os/WinLeakCheck.hxx"

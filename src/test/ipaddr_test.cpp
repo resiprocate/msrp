@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <assert.h>
-#include "msrp_address.h"
+#include "Address.h"
 
 int main(int argc, char **argv)
 {

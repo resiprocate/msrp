@@ -1,7 +1,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "msrp_tcp_transport.h"
-#include "msrp_address.h"
+#include "TcpTransport.h"
+#include "Address.h"
 
 msrp::TcpTransport::TcpTransport()
 {
