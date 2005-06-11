@@ -61,7 +61,6 @@ namespace msrp
          
          I also think this *should* work transparently with libevent.
       */
-
 };
 
 
