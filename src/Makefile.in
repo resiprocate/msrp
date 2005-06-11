@@ -5,6 +5,6 @@
 RESIPEXISTS := $(shell ls -d $(RESIPDIR) 2>/dev/null)
 ifeq ($(RESIPEXISTS),)
   $(error Temporary hack!!!! '$(RESIPDIR)' does not exist. You must checkout resiprocate along side msrp. \
-The expected top level directory structure is '/msrp/main/src'  and  '/resiprocate/main/sip' )
+The expected relative directory structure for resiprocate is expected to be '$(RESIPDIR)' )
 endif
 
