@@ -18,7 +18,7 @@ namespace msrp
       virtual ~TcpConnection();
 
       virtual bool connect(Address &remoteAddress);
-      void close() = 0;
+      virtual void close();
 
       virtual int read(char *data, size_t count);
 
