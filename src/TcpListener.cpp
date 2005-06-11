@@ -42,6 +42,7 @@ msrp::TcpListener::TcpListener()
 	return false;
       }
   
+      // set non-blocking 
       int oldflags = fcntl (desc, F_GETFL, 0);
       if (oldflags == -1)
 	return -1;

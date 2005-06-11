@@ -10,7 +10,7 @@ namespace msrp
   {
     public:
 
-    TcpListener(stack *stk, Address &localAddress, int backlog);
+    TcpListener(stack *stk, Address &localAddress, int backlog = 25);
     virtual ~Listener();
     
     virtual void process(); 

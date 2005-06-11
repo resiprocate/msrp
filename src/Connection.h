@@ -14,18 +14,11 @@ namespace msrp
       virtual ~Connection();
 
       virtual bool connect(Address &remoteAddress) = 0;
-      virtual bool listen(Address &localAddress) = 0;
       virtual void close() = 0;
 
       virtual int read(char *data, size_t count) = 0;
-      virtual int readFrom(char *data, size_t count, Address *&addr) = 0;
-
-      virtual int peek(char *data, size_t count) { return -1; }
-      virtual int peekFrom (char *data, size_t count, Address *&addr) 
-                                                 { return -1; }
 
       virtual int write(char *data, size_t count) = 0;
-      virtual int writeTo(char *data, size_t count, Address &addr) = 0;
 
     protected:
       Connection(stack *);
