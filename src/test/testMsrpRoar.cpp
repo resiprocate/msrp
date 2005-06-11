@@ -4,7 +4,7 @@
 #include <list>
 #include <assert.h>
 
-#include "src/MsrpMessage.h"
+#include "MsrpRoar.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/DnsUtil.hxx"
@@ -37,7 +37,7 @@ main(int argc, char* argv[])
         "-------d93kswow$\r\n");
      try
      {
-        auto_ptr<MsrpMessage> msg(MsrpMessage::make(txt.c_str(), false));
+        auto_ptr<MsrpRoar> msg(MsrpRoar::make(txt.c_str(), false));
         Data id = msg->getTransactionId();
         assert("d93kswow"==id);
         RequestLineType r;
@@ -86,7 +86,7 @@ main(int argc, char* argv[])
         "-------d93kswow$\r\n");
      try
      {
-        auto_ptr<MsrpMessage> msg(MsrpMessage::make(txt.c_str(), false));
+        auto_ptr<MsrpRoar> msg(MsrpRoar::make(txt.c_str(), false));
         StatusLineType s;
         assert(msg->getTransactionId()=="d93kswow");
         assert(msg->header(s).phrase()=="OK");

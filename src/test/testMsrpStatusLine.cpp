@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "common/UnknownParameterType.hxx"
-#include "src/MsrpStatusLine.h"
+#include "MsrpStatusLine.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"

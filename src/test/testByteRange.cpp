@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "common/UnknownParameterType.hxx"
-#include "src/ByteRange.h"
+#include "ByteRange.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"

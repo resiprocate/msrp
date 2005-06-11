@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>
 
-#include "src/Path.h"
+#include "Path.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/ParseBuffer.hxx"

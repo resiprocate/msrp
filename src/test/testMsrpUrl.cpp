@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>
 
-#include "src/MsrpUrl.h"
+#include "MsrpUrl.h"
 #include "common/os/DataStream.hxx"
 #include "common/os/Logger.hxx"
 #include "common/os/DnsUtil.hxx"

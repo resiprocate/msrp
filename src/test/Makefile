@@ -7,7 +7,7 @@ TESTS := $(patsubst %.cpp,%,$(SRC))
 
 all: $(TESTS)
 
-$(TESTS): ../libmsrp.a
+$(TESTS): ../libmsrp.a ../common/libcommon.a -lpthread
 
 %: %.cpp
 	$(CXX) $(CPPFLAGS) -o $@ $^
