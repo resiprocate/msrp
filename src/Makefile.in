@@ -1,0 +1,10 @@
+#
+# Temporary hack. MSRP is currently stealing code from resiprocate.  Therefore,
+# you must have resiprocate checked out side-by-side to MSRP.
+#
+RESIPEXISTS := $(shell ls -d $(RESIPDIR) 2>/dev/null)
+ifeq ($(RESIPEXISTS),)
+  $(error Temporary hack!!!! '$(RESIPDIR)' does not exist. You must checkout resiprocate along side msrp. \
+The expected top level directory structure is '/msrp/main/src'  and  '/resiprocate/main/sip' )
+endif
+
