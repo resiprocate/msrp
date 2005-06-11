@@ -31,11 +31,10 @@ class Session
 
       // Callbacks
 
-      IncomingMessage *onNewMessage();
+      virtual IncomingMessage *onNewMessage();
       
       // the application has provided data
-      bool hasDataToSend() const;
-      void write();
+      virtual bool hasDataToSend() const;
 
    private:
       Connection* mConnection;
