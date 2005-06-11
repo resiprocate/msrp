@@ -196,7 +196,7 @@
 				RelativePath=".\common\MsgHeaderScanner.cxx">
 			</File>
 			<File
-				RelativePath=".\MsrpMessage.cpp">
+				RelativePath=".\MsrpRoar.cpp">
 			</File>
 			<File
 				RelativePath=".\MsrpRequestLine.cpp">
@@ -405,7 +405,7 @@
 				RelativePath=".\common\MsgHeaderScanner.hxx">
 			</File>
 			<File
-				RelativePath=".\MsrpMessage.h">
+				RelativePath=".\MsrpRoar.h">
 			</File>
 			<File
 				RelativePath=".\MsrpRequestLine.h">
