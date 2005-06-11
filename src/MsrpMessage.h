@@ -33,28 +33,28 @@ class Transport;
 class Contents;
 class UnknownHeaderType;
 
-class MsrpMessage : public TransactionMessage
+class MsrpRoar : public TransactionMessage
 {
    public:
-      RESIP_HeapCount(MsrpMessage);
+      RESIP_HeapCount(MsrpRoar);
       typedef std::list< std::pair<Data, HeaderFieldValueList*> > UnknownHeaders;
 
-      explicit MsrpMessage(const Transport* fromWire = 0);
+      explicit MsrpRoar(const Transport* fromWire = 0);
       // .dlb. public, allows pass by value to compile.
-      MsrpMessage(const MsrpMessage& message);
+      MsrpRoar(const MsrpRoar& message);
 
       // .dlb. sure would be nice to have overloaded return value here..
-      virtual Message* clone() const;
+      virtual Roar* clone() const;
 
-      MsrpMessage& operator=(const MsrpMessage& rhs);
+      MsrpRoar& operator=(const MsrpRoar& rhs);
       
       
       // returns the transaction id.
       virtual const Data& getTransactionId() const;
 
-      virtual ~MsrpMessage();
+      virtual ~MsrpRoar();
 
-      static MsrpMessage* make(const Data& buffer, bool isExternal = false);
+      static MsrpRoar* make(const Data& buffer, bool isExternal = false);
 
       class Exception : public BaseException
       {
@@ -62,7 +62,7 @@ class MsrpMessage : public TransactionMessage
             Exception(const Data& msg, const Data& file, const int line)
                : BaseException(msg, file, line) {}
 
-            const char* name() const { return "MsrpMessage::Exception"; }
+            const char* name() const { return "MsrpRoar::Exception"; }
       };
 
       void setFromTU() 
@@ -121,7 +121,7 @@ class MsrpMessage : public TransactionMessage
       defineHeader(ContentType);
       defineHeader(ToPath);
       defineHeader(FromPath);
-      defineHeader(MessageId);
+      defineHeader(RoarId);
       defineHeader(ReportSuccess);
       defineHeader(ReportFailure);
       defineHeader(ByteRange);
@@ -158,7 +158,7 @@ class MsrpMessage : public TransactionMessage
                      const char* start, int len);
 
       // Interface used to determine which Transport was used to receive a
-      // particular MsrpMessage. If the MsrpMessage was not received from the
+      // particular MsrpRoar. If the MsrpRoar was not received from the
       // wire, getReceivedTransport() returns 0. Set in constructor
       const Transport* getReceivedTransport() const { return mTransport; }
 
@@ -189,7 +189,7 @@ class MsrpMessage : public TransactionMessage
       std::ostream& 
       encode(std::ostream& str, bool isSipFrag) const;      
 
-      void copyFrom(const MsrpMessage& message);
+      void copyFrom(const MsrpRoar& message);
 
       HeaderFieldValueList* ensureHeaders(Headers::Type type, bool single);
       HeaderFieldValueList* ensureHeaders(Headers::Type type, bool single) const; // throws if not present

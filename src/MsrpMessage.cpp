@@ -5,7 +5,7 @@
 #include "common/Contents.hxx"
 #include "common/OctetContents.hxx"
 #include "common/HeaderFieldValueList.hxx"
-#include "MsrpMessage.h"
+#include "MsrpRoar.h"
 #include "common/UnknownHeaderType.hxx"
 #include "common/os/Coders.hxx"
 #include "common/os/CountStream.hxx"
@@ -24,7 +24,7 @@ using namespace std;
 
 #define RESIPROCATE_SUBSYSTEM Subsystem::SIP
 
-MsrpMessage::MsrpMessage(const Transport* fromWire)
+MsrpRoar::MsrpRoar(const Transport* fromWire)
    : mIsExternal(fromWire != 0),
      mTransport(fromWire),
      mStartLine(0),
@@ -41,7 +41,7 @@ MsrpMessage::MsrpMessage(const Transport* fromWire)
    }
 }
 
-MsrpMessage::MsrpMessage(const MsrpMessage& from)
+MsrpRoar::MsrpRoar(const MsrpRoar& from)
    : mStartLine(0),
      mContentsHfv(0),
      mContents(0),
@@ -55,14 +55,14 @@ MsrpMessage::MsrpMessage(const MsrpMessage& from)
    *this = from;
 }
 
-Message*
-MsrpMessage::clone() const
+Roar*
+MsrpRoar::clone() const
 {
-   return new MsrpMessage(*this);
+   return new MsrpRoar(*this);
 }
 
-MsrpMessage& 
-MsrpMessage::operator=(const MsrpMessage& rhs)
+MsrpRoar& 
+MsrpRoar::operator=(const MsrpRoar& rhs)
 {
    if (this != &rhs)
    {
@@ -119,13 +119,13 @@ MsrpMessage::operator=(const MsrpMessage& rhs)
    return *this;
 }
 
-MsrpMessage::~MsrpMessage()
+MsrpRoar::~MsrpRoar()
 {
    cleanUp();
 }
 
 void
-MsrpMessage::cleanUp()
+MsrpRoar::cleanUp()
 {
    for (int i = 0; i < Headers::MAX_HEADERS; i++)
    {
@@ -155,11 +155,11 @@ MsrpMessage::cleanUp()
    mContentsHfv = 0;
 }
 
-MsrpMessage*
-MsrpMessage::make(const Data& data,  bool isExternal)
+MsrpRoar*
+MsrpRoar::make(const Data& data,  bool isExternal)
 {
    Transport* external = (Transport*)(0xFFFF);
-   MsrpMessage* msg = new MsrpMessage(isExternal ? external : 0);
+   MsrpRoar* msg = new MsrpRoar(isExternal ? external : 0);
 
    size_t len = data.size();
    char *buffer = new char[len + 5];
@@ -167,7 +167,7 @@ MsrpMessage::make(const Data& data,  bool isExternal)
    msg->addBuffer(buffer);
    memcpy(buffer,data.data(), len);
    MsgHeaderScanner msgHeaderScanner;
-   msgHeaderScanner.prepareForMessage(msg);
+   msgHeaderScanner.prepareForRoar(msg);
    
    char *unprocessedCharPtr;
    if (msgHeaderScanner.scanChunk(buffer, len, &unprocessedCharPtr) != MsgHeaderScanner::scrEnd)
@@ -185,7 +185,7 @@ MsrpMessage::make(const Data& data,  bool isExternal)
    if (used < len)
    {
       // body is present .. add it up.
-      // NB. The Sip Message uses an overlay (again)
+      // NB. The Sip Roar uses an overlay (again)
       // for the body. It ALSO expects that the body
       // will be contiguous (of course).
       // it doesn't need a new buffer in UDP b/c there
@@ -199,7 +199,7 @@ MsrpMessage::make(const Data& data,  bool isExternal)
 }
 
 const Data& 
-MsrpMessage::getTransactionId() const
+MsrpRoar::getTransactionId() const
 {
    if (0 == mStartLine)
    {
@@ -219,19 +219,19 @@ MsrpMessage::getTransactionId() const
 }
 
 bool
-MsrpMessage::isRequest() const
+MsrpRoar::isRequest() const
 {
    return mRequest;
 }
 
 bool
-MsrpMessage::isResponse() const
+MsrpRoar::isResponse() const
 {
    return mResponse;
 }
 
 Data
-MsrpMessage::brief() const
+MsrpRoar::brief() const
 {
    Data result(128, true);
 #if 0
@@ -313,7 +313,7 @@ MsrpMessage::brief() const
 }
 
 bool
-MsrpMessage::isClientTransaction() const
+MsrpRoar::isClientTransaction() const
 {
    assert(mRequest || mResponse);
    return ((mIsExternal && mResponse) || (!mIsExternal && mRequest));
@@ -321,7 +321,7 @@ MsrpMessage::isClientTransaction() const
 
 // dynamic_cast &str to DataStream* to avoid CountStream?
 std::ostream& 
-MsrpMessage::encode(std::ostream& str) const
+MsrpRoar::encode(std::ostream& str) const
 {
    if (mStartLine != 0)
    {
@@ -376,13 +376,13 @@ MsrpMessage::encode(std::ostream& str) const
 }
 
 void
-MsrpMessage::addBuffer(char* buf)
+MsrpRoar::addBuffer(char* buf)
 {
    mBufferList.push_back(buf);
 }
 
 void 
-MsrpMessage::setStartLine(const char* st, int len)
+MsrpRoar::setStartLine(const char* st, int len)
 {
    mStartLine = new HeaderFieldValueList;
    mStartLine->push_back(new HeaderFieldValue(st, len));
@@ -428,13 +428,13 @@ MsrpMessage::setStartLine(const char* st, int len)
 }
 
 void 
-MsrpMessage::setBody(const char* start, int len)
+MsrpRoar::setBody(const char* start, int len)
 {
    mContentsHfv = new HeaderFieldValue(start, len);
 }
 
 void
-MsrpMessage::setContents(auto_ptr<Contents> contents)
+MsrpRoar::setContents(auto_ptr<Contents> contents)
 {
    Contents* contentsP = contents.release();
 
@@ -481,7 +481,7 @@ MsrpMessage::setContents(auto_ptr<Contents> contents)
 }
 
 void 
-MsrpMessage::setContents(const Contents* contents)
+MsrpRoar::setContents(const Contents* contents)
 { 
    if (contents)
    {
@@ -494,23 +494,23 @@ MsrpMessage::setContents(const Contents* contents)
 }
 
 Contents*
-MsrpMessage::getContents() const
+MsrpRoar::getContents() const
 {
    if (mContents == 0 && mContentsHfv != 0)
    {
       if (!exists(h_ContentType))
       {
-         StackLog(<< "MsrpMessage::getContents: ContentType header does not exist - implies no contents");
+         StackLog(<< "MsrpRoar::getContents: ContentType header does not exist - implies no contents");
          return 0;
       }
-      DebugLog(<< "MsrpMessage::getContents: " 
+      DebugLog(<< "MsrpRoar::getContents: " 
                << header(h_ContentType).type()
                << "/"
                << header(h_ContentType).subType());
 
       if ( Contents::getFactoryMap().find(header(h_ContentType)) == Contents::getFactoryMap().end() )
       {
-         InfoLog(<< "MsrpMessage::getContents: got content type ("
+         InfoLog(<< "MsrpRoar::getContents: got content type ("
                  << header(h_ContentType).type()
                  << "/"
                  << header(h_ContentType).subType()
@@ -547,7 +547,7 @@ MsrpMessage::getContents() const
 }
 
 auto_ptr<Contents>
-MsrpMessage::releaseContents()
+MsrpRoar::releaseContents()
 {
    auto_ptr<Contents> ret(getContents());
    if (ret.get() != 0)
@@ -564,7 +564,7 @@ MsrpMessage::releaseContents()
 
 // unknown header interface
 const StringCategories& 
-MsrpMessage::header(const UnknownHeaderType& headerName) const
+MsrpRoar::header(const UnknownHeaderType& headerName) const
 {
    for (UnknownHeaders::iterator i = mUnknownHeaders.begin();
         i != mUnknownHeaders.end(); i++)
@@ -587,7 +587,7 @@ MsrpMessage::header(const UnknownHeaderType& headerName) const
 }
 
 StringCategories& 
-MsrpMessage::header(const UnknownHeaderType& headerName)
+MsrpRoar::header(const UnknownHeaderType& headerName)
 {
    for (UnknownHeaders::iterator i = mUnknownHeaders.begin();
         i != mUnknownHeaders.end(); i++)
@@ -612,7 +612,7 @@ MsrpMessage::header(const UnknownHeaderType& headerName)
 }
 
 bool
-MsrpMessage::exists(const UnknownHeaderType& symbol) const
+MsrpRoar::exists(const UnknownHeaderType& symbol) const
 {
    for (UnknownHeaders::iterator i = mUnknownHeaders.begin();
         i != mUnknownHeaders.end(); i++)
@@ -626,7 +626,7 @@ MsrpMessage::exists(const UnknownHeaderType& symbol) const
 }
 
 void
-MsrpMessage::remove(const UnknownHeaderType& headerName)
+MsrpRoar::remove(const UnknownHeaderType& headerName)
 {
    for (UnknownHeaders::iterator i = mUnknownHeaders.begin();
         i != mUnknownHeaders.end(); i++)
@@ -641,7 +641,7 @@ MsrpMessage::remove(const UnknownHeaderType& headerName)
 }
 
 void
-MsrpMessage::addHeader(Headers::Type header, const char* headerName, int headerLen, 
+MsrpRoar::addHeader(Headers::Type header, const char* headerName, int headerLen, 
                       const char* start, int len)
 {
    if (header != Headers::UNKNOWN)
@@ -683,13 +683,13 @@ MsrpMessage::addHeader(Headers::Type header, const char* headerName, int headerL
 }
 
 Data&
-MsrpMessage::getEncoded() 
+MsrpRoar::getEncoded() 
 {
    return mEncoded;
 }
 
 MsrpRequestLine& 
-MsrpMessage::header(const RequestLineType& l)
+MsrpRoar::header(const RequestLineType& l)
 {
    assert (!isResponse());
    if (mStartLine == 0 )
@@ -703,7 +703,7 @@ MsrpMessage::header(const RequestLineType& l)
 }
 
 const MsrpRequestLine& 
-MsrpMessage::header(const RequestLineType& l) const
+MsrpRoar::header(const RequestLineType& l) const
 {
    assert (!isResponse());
    if (mStartLine == 0 )
@@ -715,7 +715,7 @@ MsrpMessage::header(const RequestLineType& l) const
 }
 
 MsrpStatusLine& 
-MsrpMessage::header(const StatusLineType& l)
+MsrpRoar::header(const StatusLineType& l)
 {
    assert (!isRequest());
    if (mStartLine == 0 )
@@ -729,7 +729,7 @@ MsrpMessage::header(const StatusLineType& l)
 }
 
 const MsrpStatusLine& 
-MsrpMessage::header(const StatusLineType& l) const
+MsrpRoar::header(const StatusLineType& l) const
 {
    assert (!isRequest());
    if (mStartLine == 0 )
@@ -741,7 +741,7 @@ MsrpMessage::header(const StatusLineType& l) const
 }
 
 HeaderFieldValueList* 
-MsrpMessage::ensureHeaders(Headers::Type type, bool single)
+MsrpRoar::ensureHeaders(Headers::Type type, bool single)
 {
    HeaderFieldValueList* hfvs = mHeaders[type];
    
@@ -771,7 +771,7 @@ MsrpMessage::ensureHeaders(Headers::Type type, bool single)
 }
 
 HeaderFieldValueList* 
-MsrpMessage::ensureHeaders(Headers::Type type, bool single) const
+MsrpRoar::ensureHeaders(Headers::Type type, bool single) const
 {
    HeaderFieldValueList* hfvs = mHeaders[type];
    
@@ -802,13 +802,13 @@ MsrpMessage::ensureHeaders(Headers::Type type, bool single) const
 
 // type safe header accessors
 bool    
-MsrpMessage::exists(const HeaderBase& headerType) const 
+MsrpRoar::exists(const HeaderBase& headerType) const 
 {
    return mHeaders[headerType.getTypeNum()] != 0;
 };
 
 void
-MsrpMessage::remove(const HeaderBase& headerType)
+MsrpRoar::remove(const HeaderBase& headerType)
 {
    delete mHeaders[headerType.getTypeNum()]; 
    mHeaders[headerType.getTypeNum()] = 0; 
@@ -819,7 +819,7 @@ MsrpMessage::remove(const HeaderBase& headerType)
 #undef defineHeader
 #define defineHeader(_header)                                                                           \
 const H_##_header::Type&                                                                                \
-MsrpMessage::header(const H_##_header& headerType) const                                                 \
+MsrpRoar::header(const H_##_header& headerType) const                                                 \
 {                                                                                                       \
    HeaderFieldValueList* hfvs = ensureHeaders(headerType.getTypeNum(), true);                           \
    if (hfvs->getParserContainer() == 0)                                                                 \
@@ -830,7 +830,7 @@ MsrpMessage::header(const H_##_header& headerType) const                        
 }                                                                                                       \
                                                                                                         \
 H_##_header::Type&                                                                                      \
-MsrpMessage::header(const H_##_header& headerType)                                                       \
+MsrpRoar::header(const H_##_header& headerType)                                                       \
 {                                                                                                       \
    HeaderFieldValueList* hfvs = ensureHeaders(headerType.getTypeNum(), true);                           \
    if (hfvs->getParserContainer() == 0)                                                                 \
@@ -843,7 +843,7 @@ MsrpMessage::header(const H_##_header& headerType)                              
 #undef defineMultiHeader
 #define defineMultiHeader(_header)                                                              \
 const H_##_header##s::Type&                                                                     \
-MsrpMessage::header(const H_##_header##s& headerType) const                                      \
+MsrpRoar::header(const H_##_header##s& headerType) const                                      \
 {                                                                                               \
    HeaderFieldValueList* hfvs = ensureHeaders(headerType.getTypeNum(), false);                  \
    if (hfvs->getParserContainer() == 0)                                                         \
@@ -854,7 +854,7 @@ MsrpMessage::header(const H_##_header##s& headerType) const                     
 }                                                                                               \
                                                                                                 \
 H_##_header##s::Type&                                                                           \
-MsrpMessage::header(const H_##_header##s& headerType)                                            \
+MsrpRoar::header(const H_##_header##s& headerType)                                            \
 {                                                                                               \
    HeaderFieldValueList* hfvs = ensureHeaders(headerType.getTypeNum(), false);                  \
    if (hfvs->getParserContainer() == 0)                                                         \
@@ -872,7 +872,7 @@ defineHeader(ContentLength);
 defineHeader(ContentType);
 defineHeader(ToPath);
 defineHeader(FromPath);
-defineHeader(MessageId);
+defineHeader(RoarId);
 defineHeader(ReportSuccess);
 defineHeader(ReportFailure);
 defineHeader(ByteRange);
@@ -883,13 +883,13 @@ defineMultiHeader(ContentLanguage);
 #endif
 
 const HeaderFieldValueList*
-MsrpMessage::getRawHeader(Headers::Type headerType) const
+MsrpRoar::getRawHeader(Headers::Type headerType) const
 {
    return mHeaders[headerType];
 }
 
 void
-MsrpMessage::setRawHeader(const HeaderFieldValueList* hfvs, Headers::Type headerType)
+MsrpRoar::setRawHeader(const HeaderFieldValueList* hfvs, Headers::Type headerType)
 {
    if (mHeaders[headerType] != hfvs)
    {
