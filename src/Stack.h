@@ -4,7 +4,6 @@
 #include <map>
 
 #include "Constants.h"
-#include "Callback.h"
 #include "Session.h"
 
 namespace msrp
