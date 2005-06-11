@@ -16,7 +16,7 @@ msrp::TcpListener::~TcpListener()
 
 }
 
-
+void
 msrp::TcpListener::close()
 {
 
@@ -76,12 +76,21 @@ msrp::TcpListener::TcpListener()
 }
 
 
-void
+void 
 msrp::TcpListener::process()
 {
 
-  int 
-  new TcpConnection(mStack
+  int result, fromlen;
+  struct sockaddr_in from;
+  fromlen = sizeof(from); 
+  
+  result = accept(mDescriptor, (struct sockaddr *) &from, &fromlen);
+  
+  if (result == -1) {
+    return false;
+  }
+
+  new TcpConnection(mStack, mDescriptor);
   
 }
 

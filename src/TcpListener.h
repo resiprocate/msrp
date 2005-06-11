@@ -15,7 +15,7 @@ namespace msrp
     
     virtual void process(); 
     
-    virtual void close() = 0;
+    virtual void close();
     
   private:
     
