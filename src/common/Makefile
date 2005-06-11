@@ -22,7 +22,9 @@ OBJS := $(patsubst %.cxx, %.o, $(SRC))
 libcommon.a: $(OBJS)
 	$(AR) r $@ $^
 
--include $(DEPS)
+ifneq ($(MAKECMDGOALS),clean)
+  -include $(DEPS)
+endif
 
 %.d: %.cxx
 	@echo Generating dependencies for $*.o

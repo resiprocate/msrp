@@ -14,7 +14,11 @@ $(TESTS): ../libmsrp.a
 	./$@
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
-#-include $(DEPS)
+
+ifneq ($(MAKECMDGOALS),clean)
+#  -include $(DEPS)
+endif
+
 .%.d: %.cpp
 	@echo Generating dependencies for $*.o
 	@$(CPP) $(CFLAGS) -MM $< -MT $*.o -MT .$*.d > $@

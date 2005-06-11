@@ -22,7 +22,9 @@ OBJS := $(patsubst %.cpp, %.o, $(SRC))
 libmsrp.a: $(OBJS)
 	$(AR) r $@ $^
 
--include $(DEPS)
+ifneq ($(MAKECMDGOALS),clean)
+  -include $(DEPS)
+endif
 
 .%.d: %.cpp
 	@echo Generating dependencies for $*.o
