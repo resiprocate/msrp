@@ -1,5 +1,7 @@
-CPPFLAGS += -L.. 
-CPPFLAGS += -I.. -I../..
+RESIPDIR := ../../../../resiprocate/main/sip
+include ../Makefile.in
+
+CPPFLAGS += -I.. -I../.. -I$(RESIPDIR)
 CPPFLAGS += -Wall -g
 LDFLAGS= -L.. -L../common
 LIBS=-lmsrp -lcommon -lpthread
@@ -13,7 +15,7 @@ $(TESTS): ../libmsrp.a ../common/libcommon.a
 
 %: %.cpp
 	$(CXX) $(LDFLAGS) $(CPPFLAGS) -o $@ $< $(LIBS)
-#	./$@
+	./$@
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 
