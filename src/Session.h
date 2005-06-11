@@ -29,6 +29,10 @@ namespace msrp
 
       unsigned short getLocalPort();
 
+      // Callbacks
+
+      IncomingMessage *onNewMessage();
+
     private:
       bool mTheRemotePathIsSet;
       unsigned short mLocalPort;
