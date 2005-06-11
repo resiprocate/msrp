@@ -29,14 +29,23 @@ class Stack
          
       // Will throw Stack::Exception if port is inuse
       void addTransport(TransportType type, int port=11111);
-      int getTimeTillNextTimer() const;
+      unsigned long getTimeTillNextTimer() const;
+
+      // check if timers have fired and dns results
+      void process();
+
+      static void onLibEventCallback(int fd, short event, void* clientData);
+      void onReadyToRead(Socket fd);
+      void onReadyToWrite(Socket fd);
       
    private:
       std::vector<Listener*> mListeners;
       msrp::TimerQueue mTimerQueue;
-      
-      std::map<unsigned short, Socket> sockets;
+      msrp::DnsResolver mResolver;
+      std::map<Socket, std::list<Session*> > mSocketToSessionMap;
+      //std::map<unsigned short, Socket> sockets;
 }
+
 };
 
 #endif

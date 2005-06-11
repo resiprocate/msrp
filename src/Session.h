@@ -6,21 +6,21 @@
 
 namespace msrp
 {
-  class Session
-  {
-    public:
+class Session
+{
+   public:
 
       // We need to send an offer - the offerer
       // never listens, but needs to bind to a local port.
-      Session(Stack *stack,
+      Session(Stack& stack,
               std::vector<msrp::RelayRecord*> relays
-                = std::vector<msrp::RelayRecord*>());
+              = std::vector<msrp::RelayRecord*>());
 
       // We have an offer, and need to send an answer
-      Session(Stack *stack,
-              char *toPath,
+      Session(Stack& stack,
+              const char* toPath,
               std::vector<msrp::RelayRecord*> relays
-                = std::vector<msrp::RelayRecord*>(),
+              = std::vector<msrp::RelayRecord*>(),
               int listenPort = PREFERRED_PORT);
 
       void addRemotePath(char *toPath);
@@ -32,12 +32,17 @@ namespace msrp
       // Callbacks
 
       IncomingMessage *onNewMessage();
+      
+      // the application has provided data
+      bool hasDataToSend() const;
+      void write();
 
-    private:
+   private:
+      Connection* mConnection;
       bool mTheRemotePathIsSet;
       unsigned short mLocalPort;
       std::vector<std::string> mPath;
-  }
+}
 };
 
 #endif
