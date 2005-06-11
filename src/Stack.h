@@ -34,17 +34,18 @@ class Stack
       // check if timers have fired and dns results
       void process();
 
-      static void onLibEventCallback(int fd, short event, void* clientData);
+      void dnsBlacklist(const Data& name, const resip::Tuple& tuple);
+      
+      static void onConnectionCallback(int fd, short event, void* clientData);
       void onReadyToRead(Socket fd);
       void onReadyToWrite(Socket fd);
       
    private:
       std::vector<Listener*> mListeners;
       msrp::TimerQueue mTimerQueue;
-      msrp::DnsResolver mResolver;
+      msrp::DnsBlackLister mBlacklister;
       std::map<Socket, std::list<Session*> > mSocketToSessionMap;
-      //std::map<unsigned short, Socket> sockets;
-}
+};
 
 };
 

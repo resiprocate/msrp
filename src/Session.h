@@ -6,7 +6,7 @@
 
 namespace msrp
 {
-class Session
+class Session : public DnsResult
 {
    public:
 
@@ -36,8 +36,14 @@ class Session
       // the application has provided data
       virtual bool hasDataToSend() const;
 
+      // From msrp::DnsResult
+      virtual void onResolved(const Data& name, const resip::Tuple& tuple) const;
+      virtual void onFailed(const Data& name) const;
+
    private:
-      Connection* mConnection;
+      msrp::Stack& mStack;
+      msrp::DnsResolver mResolver;
+      msrp::Connection* mConnection;
       bool mTheRemotePathIsSet;
       unsigned short mLocalPort;
       std::vector<std::string> mPath;
