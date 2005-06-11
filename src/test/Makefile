@@ -1,17 +1,19 @@
-CPPFLAGS += -L.. -lmsrp
-CPPFLAGS += -I..
+CPPFLAGS += -L.. 
+CPPFLAGS += -I.. -I../..
 CPPFLAGS += -Wall -g
+LDFLAGS= -L.. -L../common
+LIBS=-lmsrp -lcommon -lpthread
 
 SRC := $(wildcard *.cpp)
 TESTS := $(patsubst %.cpp,%,$(SRC))
 
 all: $(TESTS)
 
-$(TESTS): ../libmsrp.a ../common/libcommon.a -lpthread
+$(TESTS): ../libmsrp.a ../common/libcommon.a 
 
 %: %.cpp
-	$(CXX) $(CPPFLAGS) -o $@ $^
-	./$@
+	$(CXX) $(LDFLAGS) $(CPPFLAGS) -o $@ $< $(LIBS)
+#	./$@
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 
