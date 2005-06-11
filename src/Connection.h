@@ -27,11 +27,8 @@ namespace msrp
       
       void processReads();
       
-   private:        
-      virtual int read(char *data, size_t count) = 0;
-      virtual int write(char *data, size_t count) = 0;
-
     protected:
+      virtual int read(char *data, size_t count) = 0;
 
       Connection(Stack *);
 
