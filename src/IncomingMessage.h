@@ -1,8 +1,8 @@
-#ifndef _MSRP_SESSION
-#define _MSRP_SESSION 1
+#ifndef _MSRP_INCOMINGMESSAGE
+#define _MSRP_INCOMINGMESSAGE 1
 
 #include "Constants.h"
-#include "Callback.h"
+
 
 namespace msrp
 {
@@ -23,20 +23,21 @@ namespace msrp
 
       // Callbacks
 
-      onDataReceived (int startByte,
+      void onDataReceived (int startByte,
                       char *buffer, 
                       int bufferLength,
                       int totalLength, 
-                      bool finished) = 0;
+                      bool finished);
 
 
-      onMessageAborted ();
+      void onMessageAborted ();
  
 
     private:
       Session *mSession;
       char *mContentType;
-  }
-};
+  };
+
+}
 
 #endif
