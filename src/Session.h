@@ -10,56 +10,29 @@ namespace msrp
   {
     public:
 
-      enum
-      {
-        COMPLETE_MESSAGE = -1,
-        TOTAL_SIZE_UNKNOWN = -2
-      };
-
       // We need to send an offer - the offerer
       // never listens, but needs to bind to a local port.
-      Session(Stack *stack
-              Callback *callback, 
-              std::vector<msrp::Relay*> relays
-                = std::vector<msrp::Relay*>());
+      Session(Stack *stack,
+              std::vector<msrp::RelayRecord*> relays
+                = std::vector<msrp::RelayRecord*>());
 
       // We have an offer, and need to send an answer
       Session(Stack *stack,
-              Callback *callBack,
               char *toPath,
-              std::vector<msrp::Relay*> relays
-                = std::vector<msrp::Relay*>(),
+              std::vector<msrp::RelayRecord*> relays
+                = std::vector<msrp::RelayRecord*>(),
               int listenPort = PREFERRED_PORT);
 
       void addRemotePath(char *toPath);
  
-      int send(char *buffer, 
-               int bufferLength,
-               char *contentType,
-               positive_report_t pr = POSITIVE_REPORT_NO,
-               negative_report_t nr = NEGATIVE_REPORT_YES,
-               int totalLength = COMPLETE_MESSAGE);
+      std::string getPath() const;
 
-      void sendMore(int id,
-                    char *buffer,
-                    int bufferLength,
-                    bool done = FALSE);
-
-      void finish(int id);
-
-      void abort(int id);
-
-      void reject(int id, int status);
-
-      void accept(int id);
-
-      std::string getToPath() const;
-      std::string getFromPath() const;
+      unsigned short getLocalPort();
 
     private:
-      Callback *callback;
-      unsigned short localPort;
-      std::vector<std::string> path;
+      bool mTheRemotePathIsSet;
+      unsigned short mLocalPort;
+      std::vector<std::string> mPath;
   }
 };
 

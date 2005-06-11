@@ -5,16 +5,16 @@
 
 namespace msrp
 {
-  class Relay
+  class RelayRecord
   {
 
     public:
-      Relay(std::string relay,
+      RelayRecord(std::string relay,
             std::string user,
             std::string pass) : 
         relayName(relay), userName(user), password(pass) {}
 
-      const std::string &getRelayName() const {return relayName;}
+      const std::string &getRelayRecordName() const {return relayName;}
       const std::string &getUserName()  const {return userName;}
       const std::string &getPassword()  const {return password;}
 
