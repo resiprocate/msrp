@@ -10,10 +10,13 @@
 # Note that this makefile requires gcc 3.0.0 or later, and
 # relies on gnu make.
 
+RESIPDIR := ../../../resiprocate/main/sip
+include Makefile.in
+
 all: common/libcommon.a libmsrp.a test
 
 SRC := $(wildcard *.cpp)
-CPPFLAGS += -Wall -g -I.
+CPPFLAGS += -Wall -g -I. -I$(RESIPDIR)
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 
