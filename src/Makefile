@@ -13,7 +13,7 @@
 all: common/libcommon.a libmsrp.a test
 
 SRC := $(wildcard *.cpp)
-CPPFLAGS += -Wall -g
+CPPFLAGS += -Wall -g -I.
 
 DEPS := $(patsubst %.cpp, .%.d, $(SRC))
 
