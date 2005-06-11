@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include "TcpConnection.h"
 #include "Address.h"
+#include "Stack.h"
 
 msrp::TcpConnection::TcpConnection()
 {
@@ -16,11 +17,15 @@ msrp::TcpConnection::TcpConnection(stack *stk, Address &remoteAddress)
 
 }
 
+
+msrp::TcpConnection::TcpConnection(stack *stk, int fd)
+  : mStack(stk), mDescriptor(fd)
+{}
+
+
 msrp::TcpConnection::~TcpConnection(stack *stk)
   : mStack(stk)
-{
-  
-}
+{}
 
 
 
@@ -67,7 +72,7 @@ msrp::TcpConnection::write(char *data, size_t count)
 {
 
   if (!descriptor) {
-    return msrp::TcpConnection::FAIL;
+    return msrp::Connection::FAIL;
   }
     
   int n;
@@ -75,7 +80,7 @@ msrp::TcpConnection::write(char *data, size_t count)
   n = ::write(descriptor, data, count);
   
   if (n == -1) {
-    return msrp::TcpConnection::FAIL;
+    return msrp::Connection::FAIL;
   }
 
   return n;
@@ -88,7 +93,7 @@ msrp::TcpConnection::read(char *data, size_t count)
 {
 
   if (!descriptor) {
-    return msrp::TcpConnection::FAIL;
+    return msrp::Connection::FAIL;
   }
 
   int n;
@@ -96,7 +101,7 @@ msrp::TcpConnection::read(char *data, size_t count)
   n = ::read(descriptor, data, count);
   
   if (n == -1) {
-    return msrp::TcpConnection::FAIL;
+    return msrp::Connection::FAIL;
   }
 
   return n;

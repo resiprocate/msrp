@@ -5,14 +5,19 @@
 
 namespace msrp
 {
-class Address;
-class Stack;
+  class Address;
+  class Stack;
 
-class Connection
-{
-   public:
+  class Connection
+  {
+
+    enum returnTypes {FAIL = -1};
+    
+    public:
+
       friend class ConnectionGroup;
-      
+      friend class Listener;
+
       virtual ~Connection();
       
       virtual bool connect(Address &remoteAddress) = 0;
@@ -24,10 +29,19 @@ class Connection
       
    private:        
       virtual int read(char *data, size_t count) = 0;
-      
-   protected:
+      virtual int write(char *data, size_t count) = 0;
+
+    protected:
+
       Connection(Stack *);
+
+      int mDescriptor;
+      Stack *mStack;
       
+      Address *mLocalAddress;
+      Address *mRemoteAddress;
+
+
       /**
          This descriptor must be usable in e.g. a select
          (or similar) statement. There is no requirement that
@@ -47,13 +61,9 @@ class Connection
          
          I also think this *should* work transparently with libevent.
       */
-      int mDescriptor;
-      
-      stack *mStack;
-      
-      Address *mLocalAddress;
-      Address *mRemoteAddress;
+
 };
+
 
 }
 #endif

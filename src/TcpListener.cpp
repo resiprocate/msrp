@@ -1,5 +1,6 @@
 #include "TcpListener.h"
 #include "Address.h"
+#include "Stack.h"
 
 msrp::TcpListener::TcpListener(Address &localAddress, int backlog)
   : mLocalAddress(localAddress), mBacklog(backlog)
@@ -11,7 +12,15 @@ msrp::TcpListener::TcpListener(Address &localAddress, int backlog)
 msrp::TcpListener::~TcpListener()
 {
   
-  close mDescriptor;
+  close();
+
+}
+
+
+msrp::TcpListener::close()
+{
+
+  ::close(mDescriptor);
 
 }
 

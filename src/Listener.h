@@ -5,15 +5,24 @@
 
 namespace msrp
 {
+
   class Address;
+  class Stack;
+
   class Listener
   {
-    public:
 
-    Listener(stack *stk, Address &localAddress);
+  public:
+    
+    enum returnTypes {FAIL = -1};
+    
+    Listener(Stack *stk);
     virtual ~Listener();
     
-    virtual void process() = 0; 
+    virtual bool listen(Address &localAddress) = 0;
+
+    
+    virtual bool process() = 0; 
     
     virtual void close() = 0;
     
@@ -21,8 +30,9 @@ namespace msrp
     
     Address *mLocalAddress;
     int mDescriptor;
-    stack *mStack;
+    Stack *mStack;
 
   };
+
 }
 #endif

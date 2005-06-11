@@ -1,8 +1,9 @@
 #include "Connection.h"
 #include "Address.h"
 
-msrp::Connection::Connection()
-  : descriptor(0), localAddress(0), remoteAddress(0)
+
+msrp::Connection::Connection(Stack *stk)
+  : mDescriptor(0), mStack(stk), mLocalAddress(0), mRemoteAddress(0)
 {
 }
 
