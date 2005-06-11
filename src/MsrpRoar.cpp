@@ -55,7 +55,7 @@ MsrpRoar::MsrpRoar(const MsrpRoar& from)
    *this = from;
 }
 
-Roar*
+Message*
 MsrpRoar::clone() const
 {
    return new MsrpRoar(*this);
@@ -167,7 +167,7 @@ MsrpRoar::make(const Data& data,  bool isExternal)
    msg->addBuffer(buffer);
    memcpy(buffer,data.data(), len);
    MsgHeaderScanner msgHeaderScanner;
-   msgHeaderScanner.prepareForRoar(msg);
+   msgHeaderScanner.prepareForMessage(msg);
    
    char *unprocessedCharPtr;
    if (msgHeaderScanner.scanChunk(buffer, len, &unprocessedCharPtr) != MsgHeaderScanner::scrEnd)
@@ -872,7 +872,7 @@ defineHeader(ContentLength);
 defineHeader(ContentType);
 defineHeader(ToPath);
 defineHeader(FromPath);
-defineHeader(RoarId);
+defineHeader(MessageId);
 defineHeader(ReportSuccess);
 defineHeader(ReportFailure);
 defineHeader(ByteRange);

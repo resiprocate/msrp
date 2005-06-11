@@ -5,7 +5,7 @@
 #include "common/os/Data.hxx"
 #include "common/Headers.hxx"
 #include "common/Symbols.hxx"
-#include "MsrpMessage.h"
+#include "MsrpRoar.h"
 
 // GPERF generated external routines
 #include "common/HeaderHash.hxx"

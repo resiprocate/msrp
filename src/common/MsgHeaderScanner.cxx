@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include "common/HeaderTypes.hxx"
-#include "MsrpMessage.h"
+#include "MsrpRoar.h"
 #include "common/MsgHeaderScanner.hxx"
 
 namespace msrp 
@@ -768,7 +768,7 @@ enum { chunkTermSentinelChar = '\0' };
     static
     bool
     processMsgHeaderStatusLine(
-        MsrpMessage *                       msg,
+        MsrpRoar *                       msg,
         char *                             lineText,
         unsigned int                       lineTextLength,
         MsgHeaderScanner::TextPropBitMask  lineTextPropBitMask)
@@ -782,7 +782,7 @@ enum { chunkTermSentinelChar = '\0' };
     static
     void
     processMsgHeaderFieldNameAndValue(
-        MsrpMessage *                       msg,
+        MsrpRoar *                       msg,
         int                                fieldKind,
         const char *                       fieldName,
         unsigned int                       fieldNameLength,
@@ -822,7 +822,7 @@ enum { chunkTermSentinelChar = '\0' };
     // Return true on success, false on failure.
 
     inline bool
-    processMsgHeaderStatusLine(MsrpMessage * msg,
+    processMsgHeaderStatusLine(MsrpRoar * msg,
                                char * lineText,
                                unsigned int lineTextLength,
                                MsgHeaderScanner::TextPropBitMask lineTextPropBitMask)
@@ -848,7 +848,7 @@ enum { chunkTermSentinelChar = '\0' };
     // including shrinking it if necessary.
 
     inline void
-    processMsgHeaderFieldNameAndValue(MsrpMessage * msg,
+    processMsgHeaderFieldNameAndValue(MsrpRoar * msg,
                                       int fieldKind,
                                       const char * fieldName,
                                       unsigned int fieldNameLength,
@@ -878,7 +878,7 @@ enum { chunkTermSentinelChar = '\0' };
     }
 
     void
-    MsgHeaderScanner::prepareForMessage(MsrpMessage *  msg)
+    MsgHeaderScanner::prepareForMessage(MsrpRoar *  msg)
     {
         mMsg = msg;
         mState = sMsgStart;
@@ -886,7 +886,7 @@ enum { chunkTermSentinelChar = '\0' };
     }
 
     void
-    MsgHeaderScanner::prepareForFrag(MsrpMessage *  msg, bool hasStartLine)
+    MsgHeaderScanner::prepareForFrag(MsrpRoar *  msg, bool hasStartLine)
     {
        mMsg = msg;
        if (hasStartLine)

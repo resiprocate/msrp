@@ -44,7 +44,7 @@ class MsrpRoar : public TransactionMessage
       MsrpRoar(const MsrpRoar& message);
 
       // .dlb. sure would be nice to have overloaded return value here..
-      virtual Roar* clone() const;
+      virtual Message* clone() const;
 
       MsrpRoar& operator=(const MsrpRoar& rhs);
       
@@ -121,7 +121,7 @@ class MsrpRoar : public TransactionMessage
       defineHeader(ContentType);
       defineHeader(ToPath);
       defineHeader(FromPath);
-      defineHeader(RoarId);
+      defineHeader(MessageId);
       defineHeader(ReportSuccess);
       defineHeader(ReportFailure);
       defineHeader(ByteRange);

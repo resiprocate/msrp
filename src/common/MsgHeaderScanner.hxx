@@ -3,7 +3,7 @@
 namespace msrp 
 {
 
-class MsrpMessage;
+class MsrpRoar;
 
 ///////////////////////////////////////////////////////////////////////////////
 // This class scans a message header for its status line (the first non-empty
@@ -16,7 +16,7 @@ class MsrpMessage;
 //
 //     MsgHeaderScanner scanner;
 //     for (;;) {
-//       MsrpMessage *msg = ...
+//       MsrpRoar *msg = ...
 //       scanner.prepareForMessage(msg);
 //       MsgHeaderScanner::ScanChunkResult scanChunkResult;
 //       do {
@@ -67,7 +67,7 @@ class MsgHeaderScanner
    private:
     
       // Fields:
-      MsrpMessage *                       mMsg;
+      MsrpRoar *                       mMsg;
       /*State*/int                       mState;      // Type defined in .cxx file.
       int                                mPrevScanChunkNumSavedTextChars;
       MsgHeaderScanner::TextPropBitMask  mTextPropBitMask;
@@ -88,10 +88,10 @@ class MsgHeaderScanner
       MsgHeaderScanner();
     
       // Destructor: defined implicitly
-      void prepareForMessage(MsrpMessage *  msg);
+      void prepareForMessage(MsrpRoar *  msg);
       // allow proper parsing of message/sipfrag & msg/external
       // presence of start line is determined in SipFrag
-      void prepareForFrag(MsrpMessage *  msg, bool hasStartLine);
+      void prepareForFrag(MsrpRoar *  msg, bool hasStartLine);
  
       
       enum ScanChunkResult {
