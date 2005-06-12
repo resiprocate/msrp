@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 #include "Callback.h"
+#include <list>
 
 namespace msrp
 {

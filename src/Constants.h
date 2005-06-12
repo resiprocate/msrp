@@ -37,6 +37,13 @@ namespace msrp
     NEGATIVE_REPORT_PARTIAL,
   } negative_report_t;
 
+
+  enum
+  {
+    COMPLETE_MESSAGE = -1,
+    TOTAL_SIZE_UNKNOWN = -2
+  } message_size_t;
+
 };
 
 #endif
