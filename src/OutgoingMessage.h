@@ -19,6 +19,7 @@ class OutgoingMessage
    public:
       OutgoingMessage(Session *session,
                       char *contentType,
+                      int totalLength = TOTAL_SIZE_UNKNOWN,
                       positive_report_t pr = POSITIVE_REPORT_NO,
                       negative_report_t nr = NEGATIVE_REPORT_YES);
 
@@ -28,8 +29,7 @@ class OutgoingMessage
       void send(int startByte,
                 char *buffer, 
                 int bufferLength,
-                bool done = false,
-                int totalLength = TOTAL_SIZE_UNKNOWN);
+                bool done = false);
         
       void finish();
 
@@ -54,13 +54,11 @@ class OutgoingMessage
    private:
       // Session calls transmit. 
       // ?dcm? make composite?
-      Transmit::Result transmit()
-      {
-         //mSession->mConnection->transmit(...);
-      }
+      Transmit::Result transmit();
 
       Session *mSession;
       char *mContentType;
+      int mTotalLength;
       positive_report_t mPositiveReports;
       negative_report_t mNegativeReports;
       MsrpRoar mRoar;
@@ -68,6 +66,7 @@ class OutgoingMessage
       char *mBuffer;
       int mBufferLength;
       int mBufferOffset;
+      int mCurrByte;
       bool mDone;
 }
 };
