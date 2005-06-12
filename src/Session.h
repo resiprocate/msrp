@@ -109,6 +109,8 @@ class Session : public DnsResult
          }
          mPendingTransmits.push_back(msg);
       }
+
+      Connection *getConnection() { return mConnection; }
       
       msrp::Stack& mStack;
       msrp::DnsResolver mResolver;
