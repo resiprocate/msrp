@@ -6,17 +6,17 @@
 
 namespace msrp
 {
-  class Session;
+class Session;
 
-  enum
-  {
-    COMPLETE_MESSAGE = -1,
-    TOTAL_SIZE_UNKNOWN = -2
-  };
+enum
+{
+   COMPLETE_MESSAGE = -1,
+   TOTAL_SIZE_UNKNOWN = -2
+};
 
-  class OutgoingMessage
-  {
-    public:
+class OutgoingMessage
+{
+   public:
       OutgoingMessage(Session *session,
                       char *contentType,
                       positive_report_t pr = POSITIVE_REPORT_NO,
@@ -28,13 +28,13 @@ namespace msrp
                 int bufferLength,
                 bool done = false,
                 int totalLength = TOTAL_SIZE_UNKNOWN);
-
+        
       void finish();
 
       void abort();
 
 
-    protected:
+   protected:
       // Callbacks
 
       /// The stack needs more data to send
@@ -49,9 +49,25 @@ namespace msrp
       /// We have received an incremental confirmation
       virtual void onProgress(int startByte, int length) = 0;
  
-    private:
+   private:
+      // OutgoingMessage::transmit will 
+      enum TransmitResult
+      {
+         MoreData,
+         Done,
+         Failed
+      };
+
+      // Session calls transmit. 
+      // ?dcm? make composite?
+      TransmitResult transmit()
+      {
+         //mSession->mConnection->transmit(...);
+      }
+      
+
       Session *mSession;
-  }
+}
 };
 
 #endif

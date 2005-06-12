@@ -33,6 +33,10 @@ class Stack
       // check if timers have fired and dns results
       void process();
 
+      // will check and see if we already have a Connection to this target
+      Connection* connect(const Tuple& target);
+      void onConnected(const Tuple& source, Connection* connection);
+      
       void dnsBlacklist(const Data& name, const resip::Tuple& tuple);
       
       static void onConnectionCallback(int fd, short event, void* clientData);
@@ -40,10 +44,16 @@ class Stack
       void onReadyToWrite(Socket fd);
       
    private:
+      void removeSession(Session* session)
+      {
+         
+      }
+      
       std::vector<Listener*> mListeners;
       msrp::TimerQueue mTimerQueue;
       msrp::DnsBlackLister mBlacklister;
       std::map<Socket, std::list<Session*> > mSocketToSessionMap;
+      std::map<Tuple, Connection*> mConnectionMap;
 };
 
 };
