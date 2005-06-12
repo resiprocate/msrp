@@ -41,11 +41,14 @@ class Stack
       
       static void onConnectionCallback(int fd, short event, void* clientData)
       {
-         
+         // clientData -> Connection*
       }
       
-      void onReadyToRead(Socket fd);
-      void onReadyToWrite(Socket fd)
+      void onReadyToRead(Connection* conn)
+      {
+      }
+      
+      void onReadyToWrite(Connection* conn)
       {
          SocketMap::iterator s = mSocketToActiveSessionMap.find(fd);
          assert(s != mSocketToActiveSessionMap.end());
@@ -53,11 +56,12 @@ class Stack
          SessionList& active = s->second;
          Session* session = active.front();
          active.pop_front();
-         if (session->transmit() == Transmit::MoreData)
+         Transmit::Result result = session->transmit();
+         if (result == Transmit::MoreData)
          {
             active.push_back(session);
          }
-         else if (session->transmit() == Transmit::Failed)
+         else if (result == Transmit::Failed)
          {
             active.clear();
             SocketMap::iterator all = mSocketToSessionMap.find(fd);
@@ -69,6 +73,22 @@ class Stack
       }
       
    private:
+      Connection* associateConnection(const Tuple& tuple, Session* session)
+      {
+         TupleMap::iterator i = mConnectionMap.find(tuple);
+         Connection* conn = 0;
+         if (i == mConnectionMap.end())
+         {
+            Connection* conn = new TcpConnection(*this, tuple);
+            mConnectionMap[tuple] = conn;
+         }
+         else
+         {
+            conn = i->second;
+         }
+         mConnectionToSessionMap[conn].push_back(session);
+      }
+      
       void removeConnection(const Tuple& tuple)
       {
          // Connection should delete himself when failure occurs
@@ -85,9 +105,9 @@ class Stack
       msrp::DnsBlackLister mBlacklister;
 
       typedef std::list<Session*> SessionList;
-      typedef std::map<Socket, SessionList> SocketMap;
-      SocketMap mSocketToSessionMap;
-      SocketMap mSocketToActiveSessionMap;
+      typedef std::map<Connection*, SessionList> ConnectionMap;
+      ConnectionMap mConnectionToSessionMap;
+      ConnectionMap mConnectionToActiveSessionMap;
       
       typedef std::map<Tuple, Connection*> TupleMap;
       TupleMap mConnectionMap;

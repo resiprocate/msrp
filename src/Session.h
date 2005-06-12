@@ -68,7 +68,8 @@ class Session : public DnsResult
       virtual void onResolved(const Data& name, const resip::Tuple& tuple) const
       {
          assert(mConnection == 0);
-         mConnection = mStack.connect(tuple);
+         mConnection = mStack.associateConnection(tuple, this);
+         mConnection->registerForWrites();
       }
       
       virtual void onFailed(const Data& name) const
@@ -87,15 +88,14 @@ class Session : public DnsResult
          assert(!mPendingTransmits.empty());
          OutgoingMessage* msg = mPendingTransmits.front();
          mPendingTransmits.pop_front();
-         if (msg->transmit() == OutgoingMessage::MoreData)
+         Transmit::Result result = msg->transmit();
+         if (result == OutgoingMessage::MoreData)
          {
+            conn->registerForWrites();
             mPendingTransmits.push_back(msg);
          }
-         else if (msg->transmit() == OutgoingMessage::Failed)
-         {
-            mStack.removeSession(this);
-            
-         }
+         // if this fails, the Stack will remove all affected Sessions
+         return result;
       }
 
       void addToPendingTransmit(OutgoingMessage* msg)

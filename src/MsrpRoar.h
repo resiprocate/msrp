@@ -39,7 +39,7 @@ class MsrpRoar : public TransactionMessage
       RESIP_HeapCount(MsrpRoar);
       typedef std::list< std::pair<Data, HeaderFieldValueList*> > UnknownHeaders;
 
-      explicit MsrpRoar(const Transport* fromWire = 0);
+      explicit MsrpRoar(const Connection* fromWire = 0);
       // .dlb. public, allows pass by value to compile.
       MsrpRoar(const MsrpRoar& message);
 
