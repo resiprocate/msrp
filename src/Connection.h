@@ -17,7 +17,8 @@ namespace msrp
 
     enum ReturnTypes {FAIL = -1};
     enum ConnFlag {DONE, CONTINUE, DEAD};
-    
+    enum ConnectionState {DONE, INROAR, INBODY, INTAIL};
+
     public:
 
       friend class ConnectionGroup;
@@ -32,6 +33,13 @@ namespace msrp
 			   ConnFlag); 
 
       void processReads();
+
+      // not sure this is even needed. Essentially, this needs to be
+      // called if we are partway through writing the tail, in which case
+      // we need to get called to finish writin the tail. This is what
+      // should be registered with the stack
+      void processWrite();
+
       
     protected:
 
@@ -48,22 +56,28 @@ namespace msrp
       Tuple *mLocalTuple;
 
       Data mTID;
-      Data mRoarBuf;
-      Data mTailBuf;
-      bool mToWrite;
-
       ConnFlag mFlag;
-      
+      ConnectionState mState;
 
-      int mRoarCount;
-      int mTailCount;
-
+      Data mBuf;
+      Data mBufCount;
       char *mCursor;
 
 
 
       char *mInsert;
       int mBufSz;
+      
+  private:
+      
+      // all these are private calls in transmit to make it easier to code
+      // eventually should probably patch in place to make it faster
+
+      bool writeRoar(const MsrpRoar &roar);
+      bool writeBuf();
+      int writeBody(char *chunk, int chunkLen);
+      bool writeTail();
+      
       
 
 
