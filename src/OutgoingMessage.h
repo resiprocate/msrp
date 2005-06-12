@@ -22,6 +22,8 @@ class OutgoingMessage
                       positive_report_t pr = POSITIVE_REPORT_NO,
                       negative_report_t nr = NEGATIVE_REPORT_YES);
 
+      virtual ~OutgoingMessage();
+
       // To start transmission, call "send" 
       void send(int startByte,
                 char *buffer, 
@@ -52,13 +54,21 @@ class OutgoingMessage
    private:
       // Session calls transmit. 
       // ?dcm? make composite?
-      TransmitResult transmit()
+      Transmit::Result transmit()
       {
          //mSession->mConnection->transmit(...);
       }
-      
 
       Session *mSession;
+      char *mContentType;
+      positive_report_t mPositiveReports;
+      negative_report_t mNegativeReports;
+      MsrpRoar mRoar;
+
+      char *mBuffer;
+      int mBufferLength;
+      int mBufferOffset;
+      bool mDone;
 }
 };
 
