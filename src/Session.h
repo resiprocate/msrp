@@ -23,6 +23,14 @@ class Session : public DnsResult
               = std::vector<msrp::RelayRecord*>(),
               int listenPort = PREFERRED_PORT);
 
+      struct DeleteSession : std::unary_function<Session*,void>
+      {
+            void operator()(Session* s)
+            {
+               delete s;
+            }
+      };
+
       struct DeleteOutgoingMessage : std::unary_function<OutgoingMessage*,void>
       {
             void operator()(OutgoingMessage* msg)

@@ -37,12 +37,23 @@ namespace msrp
     NEGATIVE_REPORT_PARTIAL,
   } negative_report_t;
 
+struct Transmit
+{
+      
+      typedef enum 
+      {
+         MoreData,
+         Done,
+         Failed
+      } Result;
+      
+};
 
-  enum
-  {
-    COMPLETE_MESSAGE = -1,
-    TOTAL_SIZE_UNKNOWN = -2
-  } message_size_t;
+enum
+{
+   COMPLETE_MESSAGE = -1,
+   TOTAL_SIZE_UNKNOWN = -2
+} message_size_t;
 
 };
 

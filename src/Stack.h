@@ -39,11 +39,42 @@ class Stack
       
       void dnsBlacklist(const Data& name, const resip::Tuple& tuple);
       
-      static void onConnectionCallback(int fd, short event, void* clientData);
+      static void onConnectionCallback(int fd, short event, void* clientData)
+      {
+         
+      }
+      
       void onReadyToRead(Socket fd);
-      void onReadyToWrite(Socket fd);
+      void onReadyToWrite(Socket fd)
+      {
+         SocketMap::iterator s = mSocketToActiveSessionMap.find(fd);
+         assert(s != mSocketToActiveSessionMap.end());
+
+         SessionList& active = s->second;
+         Session* session = active.front();
+         active.pop_front();
+         if (session->transmit() == Transmit::MoreData)
+         {
+            active.push_back(session);
+         }
+         else if (session->transmit() == Transmit::Failed)
+         {
+            active.clear();
+            SocketMap::iterator all = mSocketToSessionMap.find(fd);
+            assert(all != mSocketToSessionMap.end());
+            std::for_each(all->second.begin(), all->second.end(), Session::DeleteSession());
+            all->second.clear();
+
+         }
+      }
       
    private:
+      void removeConnection(const Tuple& tuple)
+      {
+         // Connection should delete himself when failure occurs
+         mConnectionMap.erase(tuple);
+      }
+      
       void removeSession(Session* session)
       {
          
@@ -52,8 +83,14 @@ class Stack
       std::vector<Listener*> mListeners;
       msrp::TimerQueue mTimerQueue;
       msrp::DnsBlackLister mBlacklister;
-      std::map<Socket, std::list<Session*> > mSocketToSessionMap;
-      std::map<Tuple, Connection*> mConnectionMap;
+
+      typedef std::list<Session*> SessionList;
+      typedef std::map<Socket, SessionList> SocketMap;
+      SocketMap mSocketToSessionMap;
+      SocketMap mSocketToActiveSessionMap;
+      
+      typedef std::map<Tuple, Connection*> TupleMap;
+      TupleMap mConnectionMap;
 };
 
 };

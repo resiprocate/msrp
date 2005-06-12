@@ -50,14 +50,6 @@ class OutgoingMessage
       virtual void onProgress(int startByte, int length) = 0;
  
    private:
-      // OutgoingMessage::transmit will 
-      enum TransmitResult
-      {
-         MoreData,
-         Done,
-         Failed
-      };
-
       // Session calls transmit. 
       // ?dcm? make composite?
       TransmitResult transmit()
