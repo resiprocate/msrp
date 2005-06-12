@@ -6,14 +6,17 @@
 
 namespace msrp
 {
-  class Address;
+  class Tuple;
   class Stack;
+
+  // change the Address to be tuple
+  // need accessors for the tuples
 
   class Connection
   {
 
-    enum returnTypes {FAIL = -1};
-    enum connFlag {DONE, CONTINUE};
+    enum ReturnTypes {FAIL = -1};
+    enum ConnFlag {DONE, CONTINUE, DEAD};
     
     public:
 
@@ -22,11 +25,11 @@ namespace msrp
 
       virtual ~Connection();
       
-      virtual bool connect(Address &remoteAddress) = 0;
+      virtual bool connect(Tuple &remoteTuple) = 0;
       virtual void close() = 0;
       
       virtual int transmit(const MsrpRoar&, char *, int chunkLen,
-			   connFlag); 
+			   ConnFlag); 
 
       void processReads();
       
@@ -41,13 +44,25 @@ namespace msrp
       int mDescriptor;
       Stack *mStack;
       
-      Address *mLocalAddress;
-      Address *mRemoteAddress;
+      Tuple *mRemoteTuple;
+      Tuple *mLocalTuple;
 
       Data mTID;
+      Data mRoarBuf;
+      Data mTailBuf;
+      bool mToWrite;
+
+      ConnFlag mFlag;
       
-      char mBuf[4000];
+
+      int mRoarCount;
+      int mTailCount;
+
       char *mCursor;
+
+
+
+      char *mInsert;
       int mBufSz;
       
 
