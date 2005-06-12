@@ -3,20 +3,21 @@
 
 #include "Connection.h"
 
+
 namespace msrp
 {
-  class Address;
+  class Tuple;
 
   class TcpConnection : public Connection
   {
 
   public:
     
-    TcpConnection(stack *);
-    TcpConnection(stack *, Address &remoteAddress);
+    TcpConnection(Stack *);
+    TcpConnection(Stack *, Tuple &remoteTuple);
     virtual ~TcpConnection();
     
-    virtual bool connect(Address &remoteAddress);
+    virtual bool connect(Tuple &remoteTuple);
     void close() = 0;
     
     virtual int read(char *data, size_t count);
@@ -25,7 +26,7 @@ namespace msrp
     
   private:
     
-    TcpConnection(stack *, int fd);
+    TcpConnection(Stack *, int fd);
     
   };
 
