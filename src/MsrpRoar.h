@@ -117,7 +117,6 @@ class MsrpRoar : public TransactionMessage
       defineHeader(ContentId);
       defineHeader(ContentTransferEncoding);
       defineHeader(ContentEncoding);
-      defineHeader(ContentLength);
       defineHeader(ContentType);
       defineHeader(ToPath);
       defineHeader(FromPath);
