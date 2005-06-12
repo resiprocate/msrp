@@ -2,6 +2,7 @@
 #define _MSRP_CONNECTION 1
 
 #include <sys/types.h>
+#include "MsrpRoar.h"
 
 namespace msrp
 {
@@ -12,6 +13,7 @@ namespace msrp
   {
 
     enum returnTypes {FAIL = -1};
+    enum connFlag {DONE, CONTINUE};
     
     public:
 
@@ -23,11 +25,15 @@ namespace msrp
       virtual bool connect(Address &remoteAddress) = 0;
       virtual void close() = 0;
       
-      virtual int write(char *data, size_t count) = 0;
-      
+      virtual int transmit(const MsrpRoar&, char *, int chunkLen,
+			   connFlag); 
+
       void processReads();
       
     protected:
+
+      virtual int write(char *data, size_t count) = 0;
+
       virtual int read(char *data, size_t count) = 0;
 
       Connection(Stack *);
@@ -37,6 +43,13 @@ namespace msrp
       
       Address *mLocalAddress;
       Address *mRemoteAddress;
+
+      Data mTID;
+      
+      char mBuf[4000];
+      char *mCursor;
+      int mBufSz;
+      
 
 
       /**
