@@ -12,40 +12,71 @@ namespace msrp
 class Stack 
 {
    public:
-      Stack(char *localName);
-      typedef enum 
-      {
-         Tls, 
-         Tcp
-      } TransportType;
-      
       class Exception : public BaseException
       {
          public:
-            BaseException(const char* msg, const char* file, int line);
-            virtual const char* name() const = 0;
+            BaseException(const char* msg, const char* file, int line) : 
+               BaseException(msg,file,line)
+            {
+            }
+            
+            virtual const char* name() const
+            {
+               return "Msrp::Stack::Exception";
+            }
       };
-         
-      // Will throw Stack::Exception if port is inuse
-      void addTransport(TransportType type, int port=11111);
-      unsigned long getTimeTillNextTimer() const;
+
+   public:
+      Stack(char *localName) : mLocalName(localName)
+      {
+      }
+      
+      unsigned long getTimeTillNextTimer() const
+      {
+         return 0L;
+      }
 
       // check if timers have fired and dns results
-      void process();
+      void process()
+      {
+         
+      }
 
-      // will check and see if we already have a Connection to this target
-      Connection* connect(const Tuple& target);
-      void onConnected(const Tuple& source, Connection* connection);
+      void process(const Connection* conn, const MsrpRoar& roar)
+      {
+         ConnectionMap::iterator m = mConnectionToSessionMap.find(conn);
+         assert(m != mConnectionToSessionMap.end());
+         SessionList& slist = m->second;
+         for (SessionList::iterator s=slist.begin(); s != slist.end(); ++s)
+         {
+            if (s->getId() == roar.getSessionId())
+            {
+               s->process(roar);
+               break;
+            }
+         }
+      }
       
-      void dnsBlacklist(const Data& name, const resip::Tuple& tuple);
+      // will check and see if we already have a Connection to this target
+      void onConnected(const Tuple& source, Connection* connection)
+      {
+         
+      }
+      
+      void dnsBlacklist(const Data& name, const resip::Tuple& tuple)
+      {
+         mBlacklister.blacklist(name, tuple);
+      }
       
       static void onConnectionCallback(int fd, short event, void* clientData)
       {
+         // this was the libevent callback. 
          // clientData -> Connection*
       }
       
       void onReadyToRead(Connection* conn)
       {
+         conn->processReads();
       }
       
       void onReadyToWrite(Connection* conn)
@@ -73,6 +104,11 @@ class Stack
       }
       
    private:
+      virtual Buffer& requestBuffer()
+      {
+         return mDefaultBuffer;
+      }
+      
       Connection* associateConnection(const Tuple& tuple, Session* session)
       {
          TupleMap::iterator i = mConnectionMap.find(tuple);
@@ -99,6 +135,10 @@ class Stack
       {
          
       }
+      
+   private:
+      const Data mLocalName;
+      Buffer mDefaultBuffer;
       
       std::vector<Listener*> mListeners;
       msrp::TimerQueue mTimerQueue;

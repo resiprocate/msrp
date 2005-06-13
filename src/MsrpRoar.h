@@ -51,7 +51,8 @@ class MsrpRoar : public TransactionMessage
       
       // returns the transaction id.
       virtual const Data& getTransactionId() const;
-
+      const Data& getSessionId() const;
+      
       virtual ~MsrpRoar();
 
       static MsrpRoar* make(const Data& buffer, bool isExternal = false);

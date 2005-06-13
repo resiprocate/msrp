@@ -14,14 +14,16 @@ class Session : public DnsResult
       // never listens, but needs to bind to a local port.
       Session(Stack& stack,
               std::vector<msrp::RelayRecord> relays
-              = std::vector<msrp::RelayRecord>());
+              = std::vector<msrp::RelayRecord>(),
+              const char* interface=0);
 
       // We have an offer, and need to send an answer
       Session(Stack& stack,
               const char* toPath,
               std::vector<msrp::RelayRecord*> relays
               = std::vector<msrp::RelayRecord*>(),
-              int listenPort = PREFERRED_PORT);
+              int listenPort = PREFERRED_PORT,
+              const char* interface=0);
 
       struct DeleteSession : std::unary_function<Session*,void>
       {
@@ -48,7 +50,8 @@ class Session : public DnsResult
       void addRemotePath(char *toPath);
  
       std::string getPath() const;
-
+      const Data& getId() const;
+      
       unsigned short getLocalPort();
 
       // Callbacks
@@ -57,6 +60,10 @@ class Session : public DnsResult
       {
       }
       
+      void process(const MsrpRoar& roar)
+      {
+         // lots goes here
+      }
       
       // the application has provided data
       virtual bool hasDataToSend() const
