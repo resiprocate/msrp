@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include "MsrpRoar.h"
+#include "resiprocate/os/Poll.hxx"
 
 namespace msrp
 {
@@ -12,7 +13,7 @@ namespace msrp
   // change the Address to be tuple
   // need accessors for the tuples
 
-  class Connection
+  class Connection : public resip::Poll::FDEntry
   {
 
     enum ReturnTypes {FAIL = -1};

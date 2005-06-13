@@ -5,11 +5,12 @@
 
 #include "Constants.h"
 #include "Session.h"
+#include "resiprocate/os/Poll.hxx"
 
 namespace msrp
 {
 
-class Stack 
+class Stack : public resip::Poll
 {
    public:
       class Exception : public BaseException
@@ -37,30 +38,43 @@ class Stack
       }
 
       // check if timers have fired and dns results
-      void process()
+      virtual void process(int ms)
       {
+         const std::vector<Poll::FDEntry *>& results = mPoll.wait(ms);
          
-      }
-
-      void process(const Connection* conn, const MsrpRoar& roar)
-      {
-         ConnectionMap::iterator m = mConnectionToSessionMap.find(conn);
-         assert(m != mConnectionToSessionMap.end());
-         SessionList& slist = m->second;
-         for (SessionList::iterator s=slist.begin(); s != slist.end(); ++s)
-         {
-            if (s->getId() == roar.getSessionId())
-            {
-               s->process(roar);
-               break;
-            }
-         }
       }
       
-      // will check and see if we already have a Connection to this target
-      void onConnected(const Tuple& source, Connection* connection)
+      void process(const Connection* conn, const MsrpRoar& roar)
       {
-         
+         SessionMap::iterator u = mUnassociatedSessions.find(roar.getSessionId());
+         if (u != mUnassociatedSessions.end())
+         {
+            Session* unassociated = u->second;
+            mUnassociatedSessions.erase(u);
+            mConnectionToSessionMap[conn].push_back(unassociated);
+            unassociated->process(roar);
+         }
+         else
+         {
+            ConnectionMap::iterator m = mConnectionToSessionMap.find(conn);
+            if (m != mConnectionToSessionMap.end())
+            {
+               SessionList& slist = m->second;
+               for (SessionList::iterator s=slist.begin(); s != slist.end(); ++s)
+               {
+                  if (s->getId() == roar.getSessionId())
+                  {
+                     s->process(roar);
+                     break;
+                  }
+               }
+            }
+            else
+            {
+               // send 481
+               assert(0);
+            }
+         }
       }
       
       void dnsBlacklist(const Data& name, const resip::Tuple& tuple)
@@ -109,6 +123,19 @@ class Stack
          return mDefaultBuffer;
       }
       
+      Listener* getListener(int port)
+      {
+         ListenerMap::iterator i=mListenerMap.find(port);
+         if (i == mListenerMap.end())
+         {
+            mListenerMap[port] = new TcpListener(*this, port);
+         }
+         else
+         {
+            return i->second;
+         }
+      }
+      
       Connection* associateConnection(const Tuple& tuple, Session* session)
       {
          TupleMap::iterator i = mConnectionMap.find(tuple);
@@ -133,22 +160,30 @@ class Stack
       
       void removeSession(Session* session)
       {
-         
       }
       
    private:
       const Data mLocalName;
       Buffer mDefaultBuffer;
       
-      std::vector<Listener*> mListeners;
-      msrp::TimerQueue mTimerQueue;
+      resip::Poll mPoll;
+      
+      //msrp::TimerQueue mTimerQueue;
       msrp::DnsBlackLister mBlacklister;
-
+      
+      typedef std::map<Data, Session*> SessionMap; // SessionId -> Session*
+      SessionMap mUnassociatedSessions;
+      
       typedef std::list<Session*> SessionList;
       typedef std::map<Connection*, SessionList> ConnectionMap;
       ConnectionMap mConnectionToSessionMap;
       ConnectionMap mConnectionToActiveSessionMap;
+
+      // maps from listener port to Listener*
+      typedef std::map<int, Listener*> ListenerMap;
+      ListenerMap mListenerMap;
       
+      // maps from peer address to Connection*
       typedef std::map<Tuple, Connection*> TupleMap;
       TupleMap mConnectionMap;
 };

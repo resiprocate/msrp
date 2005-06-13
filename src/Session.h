@@ -15,7 +15,18 @@ class Session : public DnsResult
       Session(Stack& stack,
               std::vector<msrp::RelayRecord> relays
               = std::vector<msrp::RelayRecord>(),
-              const char* interface=0);
+              const char* interface=0) : 
+         mStack(stack)
+         mRelays(relays),
+         mNextHop(...),
+         mConnection(0),
+         mTheRemotePathIsSet(...), // !jf!
+         mLocalPort(...), // !jf! 
+         mPath(...),
+         mPendingTransmits(),
+         mOutgoingMessages()
+      {
+      }
 
       // We have an offer, and need to send an answer
       Session(Stack& stack,
