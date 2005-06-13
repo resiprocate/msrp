@@ -3,34 +3,46 @@
 
 #include <sys/types.h>
 
+#if defined(WIN32)
+#include <Ws2tcpip.h>
+#else
+#include <netinet/in.h>
+#endif
+
+#include "Connection.h"
+#include "resiprocate/os/Tuple.hxx"
+
 namespace msrp
 {
 
   class Address;
   class Stack;
 
-  class Listener
+  class Listener : public FDEntry
   {
 
   public:
     
     enum returnTypes {FAIL = -1};
     
-    Listener(Stack *stk);
+    Listener(Stack &stk, unsigned short somePort );
     virtual ~Listener();
     
-    virtual bool listen(Address &localAddress) = 0;
+    virtual Connection* make(sockaddr &aSockaddr) =0;
+
+    bool listen(Address &localAddress);
 
     
-    virtual bool process() = 0; 
+    Connection* accept(); 
     
-    virtual void close() = 0;
+    void close();
     
   private:
     
     Address *mLocalAddress;
     int mDescriptor;
     Stack *mStack;
+    unsigned short mPort;
 
   };
 

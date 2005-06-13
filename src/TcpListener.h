@@ -2,20 +2,22 @@
 #define _MSRP_TCPLISTENER 1
 
 #include <sys/types.h>
+#include "Listener.h"
+
 
 namespace msrp
 {
   class Address;
-  class TcpListener
+  class TcpListener : public Listener
   {
     public:
 
     TcpListener(stack *stk, Address &localAddress, int backlog = 25);
     virtual ~Listener();
-    
-    virtual void process(); 
-    
-    virtual void close();
+
+
+    virtual Connection* make(sockaddr &aSockaddr);
+
     
   private:
     
