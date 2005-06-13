@@ -1,10 +1,13 @@
 #if !defined(MSRP_DnsResolver_hxx)
 #define MSRP_DnsResolver_hxx
 
+
+#include "resiprocate/os/Tuple.hxx"
+
 namespace msrp
 {
 
-class DnsResult
+class DnsResultHandler
 {
    public:
       virtual void onResolved(const Data& name, const resip::Tuple& tuple) const=0;
@@ -13,7 +16,7 @@ class DnsResult
 class DnsResolver
 {
    public:
-      DnsResolver(DnsResult& result) : mResult(result)
+      DnsResolver(DnsResultHandler& resultH) : mResultH(resultH)
       {
       }
       
@@ -21,7 +24,7 @@ class DnsResolver
       void blacklist(const Data& name, const Tuple& tuple);
       
    private:
-      DnsResult& mResult;
+      DnsResultHandler& mResultH;
 };
 
 
