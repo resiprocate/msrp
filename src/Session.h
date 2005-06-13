@@ -56,7 +56,7 @@ class Session : public DnsResult
 
       // Callbacks
 
-      virtual IncomingMessage* onNewMessage()
+      virtual IncomingMessage* createIncomingMessage(const char* mime, int length)
       {
       }
       
