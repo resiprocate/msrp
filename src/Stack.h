@@ -40,7 +40,7 @@ class Stack : public resip::Poll
       // check if timers have fired and dns results
       virtual void process(int ms)
       {
-         const std::vector<Poll::FDEntry *>& results = mPoll.wait(ms);
+         const std::vector<Poll::FDEntry *>& results = wait(ms);
          
       }
       

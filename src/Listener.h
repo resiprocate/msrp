@@ -1,50 +1,36 @@
 #ifndef _MSRP_LISTENER
 #define _MSRP_LISTENER 1
 
-#include <sys/types.h>
-
-#if defined(WIN32)
-#include <Ws2tcpip.h>
-#else
-#include <netinet/in.h>
-#endif
-
-#include "Connection.h"
+#include "msrp/Connection.h"
 #include "resiprocate/os/Tuple.hxx"
 
 namespace msrp
 {
 
-  class Address;
-  class Stack;
+class Connection;
+class Stack;
 
-  class Listener : public FDEntry
-  {
-
-  public:
+class Listener : public resip::Poll::FDEntry
+{
+   public:
+      Listener(Stack& stk, unsigned short listenPort );
+      virtual ~Listener();
     
-    enum returnTypes {FAIL = -1};
+      Connection* accept(); 
+      void close();
+      
+      virtual void doRead(); // from resip::Poll::FDEntry
+      
+   protected:
+      virtual Connection* make(sockaddr &aSockaddr) =0;
     
-    Listener(Stack &stk, unsigned short somePort );
-    virtual ~Listener();
-    
-    virtual Connection* make(sockaddr &aSockaddr) =0;
-
-    bool listen(Address &localAddress);
-
-    
-    Connection* accept(); 
-    
-    void close();
-    
-  private:
-    
-    Address *mLocalAddress;
-    int mDescriptor;
-    Stack *mStack;
-    unsigned short mPort;
-
-  };
+   private:
+      Stack& mStack;
+      resip::Tuple mTuple;
+      int mDescriptor;
+      unsigned short mPort;
+      int mBackLog;
+}; 
 
 }
 #endif

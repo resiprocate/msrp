@@ -7,20 +7,19 @@
 
 namespace msrp
 {
-  class Tuple;
-  class Stack;
+class Tuple;
+class Stack;
 
-  // change the Address to be tuple
-  // need accessors for the tuples
+// change the Address to be tuple
+// need accessors for the tuples
 
-  class Connection : public resip::Poll::FDEntry
-  {
+class Connection : public resip::Poll::FDEntry
+{
+      enum ReturnTypes {FAIL = -1};
+      enum ConnFlag {DONE, CONTINUE, DEAD};
+      enum ConnectionState {DONE, INROAR, INBODY, INTAIL};
 
-    enum ReturnTypes {FAIL = -1};
-    enum ConnFlag {DONE, CONTINUE, DEAD};
-    enum ConnectionState {DONE, INROAR, INBODY, INTAIL};
-
-    public:
+   public:
 
       friend class ConnectionGroup;
       friend class Listener;
@@ -30,31 +29,27 @@ namespace msrp
       virtual bool connect(Tuple &remoteTuple) = 0;
       virtual void close() = 0;
       
-      virtual int transmit(const MsrpRoar&, char *, int chunkLen,
-			   ConnFlag); 
+      virtual int transmit(const MsrpRoar&, 
+                           char *, int chunkLen,
+                           ConnFlag); 
 
-      void processReads();
-
-      // not sure this is even needed. Essentially, this needs to be
-      // called if we are partway through writing the tail, in which case
-      // we need to get called to finish writin the tail. This is what
-      // should be registered with the stack
-      void processWrite();
-
+      virtual void doRead(); // from resip::Poll::FDEntry
+      virtual void doWrite();// from resip::Poll::FDEntry
       
-    protected:
+
+   protected:
 
       virtual int write(char *data, size_t count) = 0;
 
       virtual int read(char *data, size_t count) = 0;
 
-      Connection(Stack *);
+      Connection(Stack&);
 
       int mDescriptor;
-      Stack *mStack;
+      Stack& mStack;
       
-      Tuple *mRemoteTuple;
-      Tuple *mLocalTuple;
+      Tuple mRemoteTuple;
+      Tuple mLocalTuple;
 
       Data mTID;
       ConnFlag mFlag;
@@ -64,12 +59,10 @@ namespace msrp
       Data mBufCount;
       char *mCursor;
 
-
-
       char *mInsert;
       int mBufSz;
       
-  private:
+   private:
       
       // all these are private calls in transmit to make it easier to code
       // eventually should probably patch in place to make it faster

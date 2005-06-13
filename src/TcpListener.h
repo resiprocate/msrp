@@ -4,26 +4,18 @@
 #include <sys/types.h>
 #include "Listener.h"
 
-
 namespace msrp
 {
-  class Address;
-  class TcpListener : public Listener
-  {
-    public:
 
-    TcpListener(stack *stk, Address &localAddress, int backlog = 25);
-    virtual ~Listener();
+class TcpListener : public Listener
+{
+   public:
+      TcpListener(Stack& stk, unsigned short port);
+      virtual ~TcpListener();
+      
+   protected:
+      virtual Connection* make(sockaddr &aSockaddr);
+};
 
-
-    virtual Connection* make(sockaddr &aSockaddr);
-
-    
-  private:
-    
-    int mBacklog;
-    sockaddr_in sin;
-
-  };
 }
 #endif

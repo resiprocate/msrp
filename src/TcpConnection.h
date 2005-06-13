@@ -1,34 +1,30 @@
 #ifndef _MSRP_TCP_CONNECTION 
 #define _MSRP_TCP_CONNECTION 1
 
-#include "Connection.h"
-
+#include "msrp/Connection.h"
 
 namespace msrp
 {
-  class Tuple;
+class Tuple;
 
-  class TcpConnection : public Connection
-  {
-
-  public:
+class TcpConnection : public Connection
+{
+   public:
+      TcpConnection(Stack&, const Tuple& remoteTuple);
+      TcpConnection(Stack&, int fd);
+      virtual ~TcpConnection();
     
-    TcpConnection(Stack *);
-    TcpConnection(Stack *, Tuple &remoteTuple);
-    virtual ~TcpConnection();
+      virtual bool connect(const Tuple& remoteTuple);
+      void close() = 0;
     
-    virtual bool connect(Tuple &remoteTuple);
-    void close() = 0;
+      virtual int read(char *data, size_t count);
+      virtual int write(char *data, size_t count);
     
-    virtual int read(char *data, size_t count);
+   private:
     
-    virtual int write(char *data, size_t count);
+      TcpConnection(Stack *, int fd);
     
-  private:
-    
-    TcpConnection(Stack *, int fd);
-    
-  };
+};
 
 }
 
