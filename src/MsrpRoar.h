@@ -6,7 +6,6 @@
 #ifndef WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <pthread.h>
 #endif
 
 #include <list>
@@ -19,7 +18,6 @@
 #include "common/TransactionMessage.hxx"
 #include "common/ParserContainer.hxx"
 #include "common/ParserCategories.hxx"
-//#include "common/Transport.hxx"
 #include "common/os/BaseException.hxx"
 #include "common/os/Data.hxx"
 #include "common/os/Socket.hxx"
@@ -28,7 +26,6 @@
 
 namespace msrp
 {
-class Transport;
 
 class Contents;
 class UnknownHeaderType;
@@ -104,8 +101,7 @@ class MsrpRoar : public TransactionMessage
 
       bool exists(const HeaderBase& headerType) const;
       void remove(const HeaderBase& headerType);
-
-
+      
 #define defineHeader(_header)                                                   \
       const H_##_header::Type& header(const H_##_header& headerType) const;     \
       H_##_header::Type& header(const H_##_header& headerType)
@@ -140,13 +136,6 @@ class MsrpRoar : public TransactionMessage
       void setRawHeader(const HeaderFieldValueList* hfvs, Headers::Type headerType);
       const UnknownHeaders& getRawUnknownHeaders() const {return mUnknownHeaders;}
 
-      Contents* getContents() const;
-      // removes the contents from the message
-      std::auto_ptr<Contents> releaseContents();
-
-      void setContents(const Contents* contents);
-      void setContents(std::auto_ptr<Contents> contents);
-
       // transport interface
       void setStartLine(const char* start, int len); 
 
@@ -160,16 +149,7 @@ class MsrpRoar : public TransactionMessage
       // Interface used to determine which Transport was used to receive a
       // particular MsrpRoar. If the MsrpRoar was not received from the
       // wire, getReceivedTransport() returns 0. Set in constructor
-      const Transport* getReceivedTransport() const { return mTransport; }
-
-      // Returns the source tuple that the message was received from
-      // only makes sense for messages received from the wire
-      //void setSource(const Tuple& tuple) { mSource = tuple; }   // !dys! commented out for now
-      //const Tuple& getSource() const { return mSource; }  // !dys! commented out for now 
-      
-      // Used by the stateless interface to specify where to send a request/response
-      //void setDestination(const Tuple& tuple) { mDestination = tuple; }  // !dys! commented out for now
-      //Tuple& getDestination() { return mDestination; } // !dys! commented out for now
+      const Transport* getReceivedConnection() const { return mTransport; }
 
       void addBuffer(char* buf);
 
@@ -203,9 +183,6 @@ class MsrpRoar : public TransactionMessage
       // raw text corresponding to each unknown header
       mutable UnknownHeaders mUnknownHeaders;
   
-      // !jf!
-      const Transport* mTransport;
-
       // For messages received from the wire, this indicates where it came
       // from. Can be used to get to the Transport and/or reliable Connection
       // Tuple mSource; // !dys! commented out for now
